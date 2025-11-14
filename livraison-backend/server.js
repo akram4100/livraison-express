@@ -9,55 +9,106 @@ dotenv.config();
 
 const app = express();
 
-app.use(express.json());
+// CORS معدل للنشر
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: process.env.CLIENT_URL || "http://localhost:3000",
     credentials: true,
   })
 );
 
-// 🔹 معالجة الاتصال بقاعدة البيانات بشكل غير متزامن
+app.use(express.json());
+
+// 🔹 تهيئة الجداول في قاعدة البيانات
+const initializeDatabase = async () => {
+  try {
+    const connection = await db.getConnection();
+    
+    // إنشاء الجداول إذا لم تكن موجودة
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS utilisateurs (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        nom VARCHAR(100) NOT NULL,
+        email VARCHAR(100) UNIQUE NOT NULL,
+        mot_de_passe VARCHAR(255) NOT NULL,
+        role ENUM('client', 'livreur', 'partenaire') DEFAULT 'client',
+        verifie TINYINT(1) DEFAULT 0,
+        reset_code VARCHAR(10) DEFAULT NULL,
+        reset_expires DATETIME DEFAULT NULL,
+        date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS pending_verifications (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        nom VARCHAR(100) NOT NULL,
+        email VARCHAR(150) UNIQUE NOT NULL,
+        mot_de_passe VARCHAR(255) NOT NULL,
+        role ENUM('client', 'livreur') DEFAULT 'client',
+        code_verification VARCHAR(6) NOT NULL,
+        expiration DATETIME NOT NULL,
+        date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    connection.release();
+    console.log("✅ Database tables initialized successfully");
+  } catch (error) {
+    console.error("❌ Database initialization error:", error);
+  }
+};
+
+// 🔹 تهيئة السيرفر
 const initializeServer = async () => {
   try {
-    // انتظار اتصال قاعدة البيانات
-    const database = await db;
-    console.log("✅ Base de données prête");
+    // اختبار اتصال قاعدة البيانات
+    await db.getConnection();
+    console.log("✅ Database connection established");
+
+    // تهيئة الجداول
+    await initializeDatabase();
 
     // ✅ المسارات
     app.use("/api", userRoutes);
 
-    // ✅ مسار اختبار
+    // ✅ مسارات الاختبار
     app.get("/", (req, res) => {
-      res.send("🚀 API Livraison fonctionne correctement !");
+      res.send("🚀 API Livraison Express is running on Railway!");
     });
 
-    // ✅ مسار لاختبار الاتصال بالصفحة الرئيسية
     app.get("/api/test", (req, res) => {
-      res.json({ message: "✅ API test route is working!" });
+      res.json({ 
+        message: "✅ API is working!",
+        environment: process.env.NODE_ENV,
+        timestamp: new Date().toISOString()
+      });
     });
 
-    // ✅ مسار لاختبار قاعدة البيانات
     app.get("/api/test-db", async (req, res) => {
       try {
-        const [rows] = await database.query("SELECT 1 as test");
-        res.json({ message: "✅ Database connection successful", data: rows });
+        const [rows] = await db.query("SELECT 1 as test, NOW() as time");
+        res.json({ 
+          message: "✅ Database connection successful", 
+          data: rows,
+          database: process.env.MYSQLDATABASE 
+        });
       } catch (error) {
-        res.status(500).json({ error: "❌ Database connection failed", details: error.message });
+        res.status(500).json({ 
+          error: "❌ Database connection failed", 
+          details: error.message 
+        });
       }
     });
 
     const PORT = process.env.PORT || 8080;
-    app.listen(PORT, () =>
-      console.log(`✅ Serveur démarré sur http://localhost:${PORT}`)
-    );
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`✅ Server running on port ${PORT}`);
+      console.log(`🌐 Environment: ${process.env.NODE_ENV}`);
+    });
 
   } catch (error) {
-    console.error("❌ Échec du démarrage du serveur:", error.message);
-    console.log("\n🔧 Solutions possibles:");
-    console.log("  1. Démarrez MySQL (XAMPP/WAMP/MAMP)");
-    console.log("  2. Vérifiez le fichier .env");
-    console.log("  3. Créez la base de données manuellement");
+    console.error("❌ Server startup failed:", error.message);
     process.exit(1);
   }
 };
