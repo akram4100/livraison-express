@@ -14,7 +14,7 @@ const router = express.Router();
 // 🔹 Routes للتسجيل والتحقق
 router.post("/register", registerUser);
 router.post("/verify-code", verifyEmailCode);
-router.post("/login", loginUser);
+router.post("/login", loginUser); // المسار الآن: /api/login
 
 // 🔹 Routes لكلمة المرور
 router.post("/send-reset-code", sendPasswordResetCode);

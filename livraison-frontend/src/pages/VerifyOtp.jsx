@@ -49,7 +49,7 @@ const VerifyOtp = ({ globalDarkMode, updateGlobalDarkMode }) => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:8080/api/verify-reset-code", {
+      const response = await fetch("http://livraison-api-x45n.onrender.com/api/verify-reset-code", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, code: enteredOtp }),

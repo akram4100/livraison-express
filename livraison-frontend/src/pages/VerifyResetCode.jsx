@@ -12,7 +12,7 @@ export default function VerifyResetCode() {
   const handleVerify = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://http://localhost:8080/api/reset-password", {
+      const response = await fetch("http://http://livraison-api-x45n.onrender.com/api/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, code, newPassword }),

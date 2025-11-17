@@ -10,23 +10,54 @@ const dbConfig = {
   password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD,
   database: process.env.MYSQLDATABASE || process.env.DB_NAME,
   port: process.env.MYSQLPORT || process.env.DB_PORT || 3306,
-  connectTimeout: 60000,
-  acquireTimeout: 60000,
-  timeout: 60000,
+  
+  // 🔹 الإعدادات الصحيحة لـ Connection Pool فقط
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
+  
+  // 🔹 إعدادات SSL لـ Railway
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 };
 
-// استخدم Connection Pool للأفضلية في production
+console.log('🔧 Initializing Railway MySQL Connection...');
+console.log('📍 Host:', dbConfig.host);
+console.log('📁 Database:', dbConfig.database);
+console.log('🚪 Port:', dbConfig.port);
+
+// إنشاء Connection Pool
 const db = mysql.createPool(dbConfig);
 
-// اختبار الاتصال
+// اختبار الاتصال عند التهيئة
 db.getConnection()
   .then(connection => {
-    console.log("✅ Connected to Railway MySQL database");
-    connection.release();
+    console.log("✅ Connected to Railway MySQL database successfully!");
+    
+    // اختبار استعلام إضافي
+    return connection.query('SELECT NOW() as server_time, DATABASE() as db_name')
+      .then(([results]) => {
+        console.log('⏰ Database Server Time:', results[0].server_time);
+        console.log('🗃️ Current Database:', results[0].db_name);
+        connection.release();
+      });
   })
   .catch(error => {
     console.error("❌ Railway DB connection error:", error.message);
+    console.error("🔍 Error details:", {
+      code: error.code,
+      errno: error.errno
+    });
   });
+
+// معالجة أخطاء الـ Pool
+db.on('connection', (connection) => {
+  console.log('🔌 New database connection established');
+});
+
+db.on('error', (err) => {
+  console.error('💥 Database pool error:', err.message);
+});
 
 export default db;

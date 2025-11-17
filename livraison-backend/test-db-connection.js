@@ -1,40 +1,45 @@
-// test-email.js (ملف جديد)
-import emailjs from '@emailjs/nodejs';
+// test-db.js
+import mysql from 'mysql2/promise';
+import dotenv from 'dotenv';
 
-const SERVICE_ID = 'service_eupzdew';
-const TEMPLATE_ID = 'template_o9owsdl';
-const PUBLIC_KEY = '3M5sZiQlW-9GlSWAo';
-const PRIVATE_KEY = 'aIWUdISv0EO9fQhvyM3aP';
+dotenv.config();
 
-async function testDirectEmailJS() {
+async function testConnection() {
+  const dbConfig = {
+    host: process.env.MYSQLHOST,
+    user: process.env.MYSQLUSER,
+    password: process.env.MYSQLPASSWORD,
+    database: process.env.MYSQLDATABASE,
+    port: process.env.MYSQLPORT,
+    connectTimeout: 60000,
+    acquireTimeout: 60000,
+    timeout: 60000,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+  };
+
+  console.log('🔧 Testing DB Configuration:');
+  console.log('Host:', dbConfig.host);
+  console.log('User:', dbConfig.user);
+  console.log('Database:', dbConfig.database);
+  console.log('Port:', dbConfig.port);
+  console.log('SSL:', dbConfig.ssl);
+
   try {
-    console.log('🚀 Testing EmailJS directly...');
+    const connection = await mysql.createConnection(dbConfig);
+    console.log('✅ Database connection successful!');
     
-    const result = await emailjs.send(
-      SERVICE_ID,
-      TEMPLATE_ID,
-      {
-        to_email: 'your-email@gmail.com',
-        subject: 'Direct Test',
-        name: 'Test User',
-        user_name: 'Test User',
-        username: 'Test User',
-        code: '123456',
-        otp_code: '123456',
-        code_otp: '123456'
-      },
-      {
-        publicKey: PUBLIC_KEY,
-        privateKey: PRIVATE_KEY,
-      }
-    );
+    // اختبار استعلام بسيط
+    const [rows] = await connection.execute('SELECT 1 as test');
+    console.log('✅ Test query successful:', rows);
     
-    console.log('✅ SUCCESS:', result);
-    return result;
+    await connection.end();
+    return true;
   } catch (error) {
-    console.log('❌ ERROR:', error);
-    return error;
+    console.error('❌ Database connection failed:', error.message);
+    console.error('Error code:', error.code);
+    console.error('Error details:', error);
+    return false;
   }
 }
 
-testDirectEmailJS();
+testConnection();

@@ -1,6 +1,7 @@
 {
   "name": "livraison-frontend",
   "version": "1.0.0",
+  "proxy": "http://livraison-api-x45n.onrender.com",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

@@ -1,25 +1,12 @@
-import type { CapacitorConfig } from '@capacitor/cli';
+import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.akram.livraison',
   appName: 'Livraison Express',
   webDir: 'www',
   server: {
-    androidScheme: 'https',
-    // 🔥 هذا السطر الحاسم لحل مشكلة الاتصال
-    url: 'http://localhost:8080',
+    url: 'https://livraison-api-x45n.onrender.com',
     cleartext: true
-  },
-  plugins: {
-    Camera: {
-      enableUpload: true
-    },
-    Geolocation: {
-      enableHighAccuracy: true
-    },
-    PushNotifications: {
-      presentationOptions: ['badge', 'sound', 'alert']
-    }
   }
 };
 

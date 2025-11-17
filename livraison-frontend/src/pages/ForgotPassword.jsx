@@ -10,7 +10,7 @@ export default function ForgotPassword() {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch("http://http://localhost:8080/api/send-reset-code", {
+      const response = await fetch("http://http://livraison-api-x45n.onrender.com/api/send-reset-code", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),

@@ -82,7 +82,7 @@ export default function Login({ globalDarkMode, updateGlobalDarkMode }) {
     console.log("🔐 Tentative de connexion:", { email, motDePasse });
 
     try {
-      const response = await fetch("http://localhost:8080/api/login", {
+      const response = await fetch("http://livraison-api-x45n.onrender.com/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, mot_de_passe: motDePasse }),
@@ -135,7 +135,7 @@ switch(data.user.role) {
     if (!email) return alert("Veuillez entrer votre adresse email !");
 
     try {
-      const response = await fetch("http://localhost:8080/api/send-reset-code", {
+      const response = await fetch("http://livraison-api-x45n.onrender.com/api/send-reset-code", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),

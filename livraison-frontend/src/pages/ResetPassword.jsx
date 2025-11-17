@@ -71,7 +71,7 @@ const ResetPassword = ({ globalDarkMode, updateGlobalDarkMode }) => {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/api/reset-password", {
+      const response = await fetch("http://livraison-api-x45n.onrender.com/api/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 

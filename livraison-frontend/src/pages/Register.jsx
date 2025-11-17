@@ -35,7 +35,7 @@ useEffect(() => {
   const [loading, setLoading] = useState(false);
 
   // 🔹 إعدادات API - مصحح
-  const API_BASE = "http://localhost:8080/api";
+  const API_BASE = "http://livraison-api-x45n.onrender.com/api";
 
   // 🌍 تغيير اللغة
   const changeLanguage = (lang) => {
@@ -161,7 +161,7 @@ const toggleDarkMode = () => {
   // 🔗 اختبار اتصال السيرفر
   const testServerConnection = async () => {
     try {
-      const response = await fetch("http://localhost:8080/");
+      const response = await fetch("http://livraison-api-x45n.onrender.com/");
       const data = await response.text();
       alert("✅ السيرفر يعمل: " + data);
     } catch (error) {
