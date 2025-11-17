@@ -1,0 +1,653 @@
+.login-container {
+  display: flex;
+  height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow: hidden;
+}
+
+/* ----------- Left Side (تصميم جديد) ----------- */
+.login-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  text-align: center;
+}
+
+.truck-image {
+  width: 180px;
+  margin-bottom: 2rem;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+}
+
+.login-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  background: linear-gradient(45deg, #fff, #e3f2fd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.login-subtitle {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  line-height: 1.6;
+  max-width: 400px;
+}
+
+/* ----------- Right Side (تصميم جديد) ----------- */
+.login-right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background: white;
+}
+
+.login-form-container {
+  width: 100%;
+  max-width: 400px;
+  background: white;
+  padding: 2.5rem;
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.login-badge {
+  display: inline-block;
+  background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.login-header h2 {
+  font-size: 1.8rem;
+  color: #2d3748;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.login-header p {
+  color: #718096;
+  font-size: 0.95rem;
+}
+
+/* نموذج التسجيل */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #4a5568;
+  font-size: 0.95rem;
+}
+
+.form-group input {
+  padding: 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: #f8fafc;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-group input::placeholder {
+  color: #a0aec0;
+}
+
+/* زر التسجيل */
+.btn-login {
+  padding: 1rem;
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+}
+
+.btn-login:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+.btn-login:active {
+  transform: translateY(0);
+}
+
+/* رابط التسجيل */
+.signup-link {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: #718096;
+  font-size: 0.95rem;
+}
+
+.signup-link a {
+  color: #667eea;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.signup-link a:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+/* تأثيرات Responsive */
+@media (max-width: 768px) {
+  .login-container {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .login-left {
+    padding: 3rem 1rem;
+  }
+  
+  .login-right {
+    padding: 2rem 1rem;
+  }
+}
+
+/* تأثيرات الحركة */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.login-form-container {
+  animation: fadeInUp 0.6s ease-out;
+}
+.error-text {
+  color: #ff4d4d;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 10px;
+}
+/* 🌙 الوضع الليلي المحسن */
+.dark {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
+  color: #e0e0e0 !important;
+}
+
+.dark .login-left {
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(15px);
+}
+
+.dark .login-right {
+  background: #1a1a1a !important;
+}
+
+.dark .login-form-container {
+  background: #2d2d2d !important;
+  border: 1px solid #404040 !important;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4) !important;
+}
+
+.dark .login-header h2 {
+  color: #ffffff !important;
+}
+
+.dark .login-header p {
+  color: #b0b0b0 !important;
+}
+
+.dark .login-badge {
+  background: linear-gradient(45deg, #ff6b6b, #ff8e53) !important;
+}
+
+.dark .form-group label {
+  color: #e0e0e0 !important;
+}
+
+.dark .form-group input {
+  background: #3a3a3a !important;
+  border: 2px solid #555 !important;
+  color: #ffffff !important;
+}
+
+.dark .form-group input:focus {
+  border-color: #667eea !important;
+  background: #444 !important;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2) !important;
+}
+
+.dark .form-group input::placeholder {
+  color: #888 !important;
+}
+
+.dark .btn-login {
+  background: linear-gradient(45deg, #667eea, #764ba2) !important;
+  color: white !important;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
+}
+
+.dark .btn-login:hover {
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4) !important;
+  transform: translateY(-2px) !important;
+}
+
+.dark .signup-link {
+  color: #b0b0b0 !important;
+}
+
+.dark .signup-link a {
+  color: #8ab4f8 !important;
+}
+
+.dark .signup-link a:hover {
+  color: #aecbfa !important;
+}
+
+.dark .forgot-password-link a {
+  color: #8ab4f8 !important;
+}
+
+.dark .forgot-password-link a:hover {
+  color: #aecbfa !important;
+}
+
+/* تحسين صورة الشاحنة في الوضع الليلي */
+.dark .truck-image {
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5)) brightness(0.9);
+}
+
+/* تحسين أزرار اللغة في الوضع الليلي */
+.dark .language-switch button {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+}
+
+.dark .language-switch button:hover {
+  background: rgba(255, 255, 255, 0.25) !important;
+}
+/* انتقال سلس لجميع العناصر */
+.login-container,
+.login-left,
+.login-right,
+.login-form-container,
+.form-group input,
+.btn-login,
+.language-switch button {
+  transition: all 0.4s ease-in-out;
+}
+.language-switch button {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.language-switch button:hover {
+  transform: scale(1.2);
+}
+/* تنسيقات أزرار اللغة والوضع الليلي */
+.language-switch {
+  position: absolute;
+  top: 20px;
+  display: flex;
+  gap: 10px;
+  z-index: 1000;
+}
+/* تنسيقات ثابتة لأزرار اللغة - لا تتغير مع الاتجاه */
+.language-switch {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+  z-index: 1000;
+}
+
+/* منع أي تأثير للغة العربية على تخطيط الصفحة */
+.login-container {
+  direction: ltr !important;
+}
+
+/* إعادة تعيين أي تنسيقات قد تتأثر باللغة */
+.login-left,
+.login-right,
+.login-form-container,
+.login-form,
+.form-group,
+.login-header,
+.login-header h2,
+.login-header p,
+.form-group label,
+.form-group input,
+.signup-link,
+.forgot-password-link {
+  direction: ltr !important;
+  text-align: left !important;
+}
+
+/* التأكد من أن النص في الأزرار يبقى من اليسار لليمين */
+.language-switch button {
+  direction: ltr !important;
+}
+.language-switch button {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.language-switch button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+/* تنسيقات أزرار اللغة والوضع الليلي */
+.language-switch {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+  z-index: 1000;
+}
+
+/* للغة العربية - نحرك الأزرار للجهة اليسرى */
+[dir="rtl"] .language-switch {
+  right: auto;
+  left: 20px;
+}
+
+.language-switch button {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.language-switch button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+/* منع تغيير اتجاه الصفحة الرئيسية */
+.login-container {
+  direction: ltr !important;
+}
+
+/* الحفاظ على اتجاه النموذج ثابتاً */
+.login-form-container,
+.login-form,
+.form-group,
+.login-header {
+  direction: ltr !important;
+  text-align: left !important;
+}
+
+[dir="rtl"] .login-form-container,
+[dir="rtl"] .login-form,
+[dir="rtl"] .form-group,
+[dir="rtl"] .login-header {
+  direction: ltr !important;
+  text-align: left !important;
+}
+
+/* تنسيق النصوص داخل النموذج لتبقى من اليسار لليمين */
+.login-header h2,
+.login-header p,
+.form-group label,
+.form-group input,
+.signup-link,
+.forgot-password-link {
+  direction: ltr !important;
+  text-align: left !important;
+}
+/* تنسيقات ثابتة لأزرار اللغة */
+.language-switch {
+  position: fixed !important;
+  top: 20px !important;
+  right: 20px !important;
+  display: flex !important;
+  gap: 10px !important;
+  z-index: 1000 !important;
+  direction: ltr !important;
+}
+
+/* إعادة تعيين كاملة لأي تأثير من اللغة العربية */
+* {
+  direction: ltr !important;
+  text-align: left !important;
+}
+
+.login-container {
+  direction: ltr !important;
+}
+
+/* الحفاظ على التصميم الأصلي */
+.login-left,
+.login-right {
+  direction: ltr !important;
+}
+
+.login-form-container {
+  direction: ltr !important;
+  text-align: left !important;
+}
+.language-switch {
+  position: fixed !important;
+  top: 20px !important;
+  right: 20px !important;
+  left: auto !important;
+  display: flex !important;
+  gap: 10px !important;
+  z-index: 1000 !important;
+  direction: ltr !important;
+}
+
+/* إلغاء كامل لأي تأثير من RTL على الشريط */
+html[dir="rtl"] .language-switch,
+body[dir="rtl"] .language-switch,
+[dir="rtl"] .language-switch {
+  right: 20px !important;
+  left: auto !important;
+}
+/* ================================================
+   📊 إحصائيات حية - Live Statistics
+   ================================================ */
+
+.stats-container {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 2rem;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(15px);
+  padding: 1rem 2rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  min-width: 100px;
+}
+
+.stat-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.stat-number {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 0.2rem;
+  background: linear-gradient(45deg, #fff, #e3f2fd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+/* 🔄 حركات متحركة للأرقام */
+@keyframes countUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stat-number {
+  animation: countUp 1s ease-out;
+}
+
+/* ✨ تأثيرات hover */
+.stat-item:hover .stat-icon {
+  transform: scale(1.2);
+  transition: transform 0.3s ease;
+}
+
+.stat-item:hover .stat-number {
+  background: linear-gradient(45deg, #ffd700, #ff6b6b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: all 0.3s ease;
+  background-clip: text;
+}
+
+/* 📱 تصميم متجاوب */
+@media (max-width: 768px) {
+  .stats-container {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    transform: none;
+    margin: 2rem auto;
+    width: 90%;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+  }
+  
+  .stat-item {
+    min-width: 80px;
+  }
+  
+  .stat-number {
+    font-size: 1.5rem;
+  }
+}
+
+/* 🌙 الوضع الليلي */
+.dark .stats-container {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark .stat-number {
+  background: linear-gradient(45deg, #fff, #8ab4f8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* 🔄 حركة تموج خفيفة */
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+  50% {
+    box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
+  }
+}
+
+.stats-container {
+  animation: pulseGlow 4s ease-in-out infinite;
+}
+/* 🔹 كلاس عالمي للوضع الليلي */
+.dark-mode-global {
+  background: #1a1a1a !important;
+  color: #e0e0e0 !important;
+}
+
+/* 🔹 تأكد من أن التغييرات تظهر فوراً */
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* 🔹 إعادة تعيين أي أنماط قد تتعارض */
+body.dark-mode-global .login-container {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
+}

@@ -180,3 +180,4 @@ const ResetPassword = ({ globalDarkMode, updateGlobalDarkMode }) => {
 };
 
 export default ResetPassword;
+

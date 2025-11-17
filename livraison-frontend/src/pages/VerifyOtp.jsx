@@ -125,3 +125,4 @@ const VerifyOtp = ({ globalDarkMode, updateGlobalDarkMode }) => {
 };
 
 export default VerifyOtp;
+

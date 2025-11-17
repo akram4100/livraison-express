@@ -1,0 +1,965 @@
+.register-container {
+  display: flex;
+  height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow: hidden;
+}
+
+/* الجانب الأيسر */
+.register-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  text-align: center;
+  color: white;
+}
+
+.truck-image {
+  width: 200px;
+  margin-bottom: 2rem;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+}
+
+.register-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.register-subtitle {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  line-height: 1.6;
+  max-width: 400px;
+}
+
+/* الجانب الأيمن */
+.register-right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background: white;
+}
+
+.register-form-container {
+  width: 100%;
+  max-width: 450px;
+  background: white;
+  padding: 2.5rem;
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+}
+
+.register-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.register-badge {
+  display: inline-block;
+  background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.register-header h2 {
+  font-size: 1.8rem;
+  color: #2d3748;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.register-header p {
+  color: #718096;
+  font-size: 0.95rem;
+}
+
+/* نموذج التسجيل */
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #4a5568;
+  font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group select {
+  padding: 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: #f8fafc;
+  font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-group input::placeholder {
+  color: #a0aec0;
+}
+
+/* زر التسجيل */
+.btn-primary {
+  padding: 1rem;
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+  font-family: inherit;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+/* رابط تسجيل الدخول */
+.login-link {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: #718096;
+  font-size: 0.95rem;
+}
+
+.login-link a {
+  color: #667eea;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.login-link a:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+/* رسائل التنبيه */
+.message {
+  text-align: center;
+  margin-top: 1rem;
+  padding: 0.8rem;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.message:not(:empty) {
+  background: #edf2f7;
+  border: 1px solid #e2e8f0;
+}
+
+/* تأثيرات الحركة */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.register-form-container {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* تأثيرات Responsive */
+@media (max-width: 768px) {
+  .register-container {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .register-left {
+    padding: 3rem 1rem;
+  }
+  
+  .register-right {
+    padding: 2rem 1rem;
+  }
+  
+  .register-form-container {
+    margin: 1rem;
+  }
+}
+
+/* تحسينات للوضع verification */
+.verification-mode .register-header h2 {
+  color: #e53e3e;
+}
+
+.verification-mode .register-badge {
+  background: linear-gradient(45deg, #e53e3e, #c53030);
+}
+/* تأثير اهتزاز الشاحنة الواقعي */
+@keyframes truckDriving {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  10% {
+    transform: translateY(-2px) rotate(-0.5deg);
+  }
+  20% {
+    transform: translateY(1px) rotate(0.3deg);
+  }
+  30% {
+    transform: translateY(-3px) rotate(0.8deg);
+  }
+  40% {
+    transform: translateY(2px) rotate(-0.7deg);
+  }
+  50% {
+    transform: translateY(-1px) rotate(0.2deg);
+  }
+  60% {
+    transform: translateY(-4px) rotate(-0.9deg);
+  }
+  70% {
+    transform: translateY(3px) rotate(0.6deg);
+  }
+  80% {
+    transform: translateY(-2px) rotate(-0.4deg);
+  }
+  90% {
+    transform: translateY(1px) rotate(0.1deg);
+  }
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+}
+
+/* تأثير اهتزاز قوي (للمطبات الكبيرة) */
+@keyframes truckBump {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  15% {
+    transform: translateY(-8px) rotate(-2deg);
+  }
+  30% {
+    transform: translateY(12px) rotate(3deg);
+  }
+  45% {
+    transform: translateY(-6px) rotate(-1deg);
+  }
+  60% {
+    transform: translateY(4px) rotate(1deg);
+  }
+  75% {
+    transform: translateY(-2px) rotate(-0.5deg);
+  }
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+}
+
+/* حركة تقدم الشاحنة مع اهتزازات */
+@keyframes truckMovingForward {
+  0% {
+    transform: translateX(-20px) translateY(0px) rotate(0deg);
+  }
+  10% {
+    transform: translateX(-10px) translateY(-2px) rotate(-0.5deg);
+  }
+  20% {
+    transform: translateX(0px) translateY(1px) rotate(0.3deg);
+  }
+  30% {
+    transform: translateX(10px) translateY(-3px) rotate(0.8deg);
+  }
+  40% {
+    transform: translateX(20px) translateY(2px) rotate(-0.7deg);
+  }
+  50% {
+    transform: translateX(30px) translateY(-1px) rotate(0.2deg);
+  }
+  60% {
+    transform: translateX(20px) translateY(-4px) rotate(-0.9deg);
+  }
+  70% {
+    transform: translateX(10px) translateY(3px) rotate(0.6deg);
+  }
+  80% {
+    transform: translateX(0px) translateY(-2px) rotate(-0.4deg);
+  }
+  90% {
+    transform: translateX(-10px) translateY(1px) rotate(0.1deg);
+  }
+  100% {
+    transform: translateX(-20px) translateY(0px) rotate(0deg);
+  }
+}
+
+/* تحديث كلاس الشاحنة */
+.truck-image {
+  width: 200px;
+  margin-bottom: 2rem;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+  /* تطبيق تأثير القيادة الواقعي */
+  animation: truckDriving 2s ease-in-out infinite;
+}
+
+/* تأثير اهتزاز العجلات */
+@keyframes wheelVibration {
+  0% {
+    transform: rotate(0deg) translateY(0px);
+  }
+  25% {
+    transform: rotate(90deg) translateY(-1px);
+  }
+  50% {
+    transform: rotate(180deg) translateY(1px);
+  }
+  75% {
+    transform: rotate(270deg) translateY(-2px);
+  }
+  100% {
+    transform: rotate(360deg) translateY(0px);
+  }
+}
+
+/* تأثير دخول وخروج من المطبات */
+@keyframes roadBumps {
+  0% {
+    transform: translateY(0px);
+  }
+  /* مطب صغير */
+  15% {
+    transform: translateY(-5px);
+  }
+  20% {
+    transform: translateY(8px);
+  }
+  25% {
+    transform: translateY(-3px);
+  }
+  30% {
+    transform: translateY(0px);
+  }
+  /* مطب كبير */
+  65% {
+    transform: translateY(-12px);
+  }
+  70% {
+    transform: translateY(15px);
+  }
+  75% {
+    transform: translateY(-8px);
+  }
+  80% {
+    transform: translateY(4px);
+  }
+  85% {
+    transform: translateY(-2px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+/* كلاس للاهتزاز القوي عند المرور على مطب */
+.truck-bump {
+  animation: truckBump 1.5s ease-in-out;
+}
+
+/* تأثير واقعي مع حركة تقدم */
+.truck-moving {
+  animation: truckMovingForward 8s ease-in-out infinite;
+}
+/* 🌙 الوضع الليلي لصفحة التسجيل */
+.dark.register-container {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
+  color: #e0e0e0 !important;
+}
+
+.dark .register-left {
+  background: rgba(0, 0, 0, 0.3) !important;
+  backdrop-filter: blur(15px) !important;
+  color: #ffffff !important;
+}
+
+.dark .register-right {
+  background: #1a1a1a !important;
+}
+
+.dark .register-form-container {
+  background: #2d2d2d !important;
+  border: 1px solid #404040 !important;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4) !important;
+}
+
+.dark .register-header h2 {
+  color: #ffffff !important;
+}
+
+.dark .register-header p {
+  color: #b0b0b0 !important;
+}
+
+.dark .register-badge {
+  background: linear-gradient(45deg, #ff6b6b, #ff8e53) !important;
+}
+
+.dark .form-group label {
+  color: #e0e0e0 !important;
+}
+
+.dark .form-group input,
+.dark .form-group select {
+  background: #3a3a3a !important;
+  border: 2px solid #555 !important;
+  color: #ffffff !important;
+}
+
+.dark .form-group input:focus,
+.dark .form-group select:focus {
+  border-color: #667eea !important;
+  background: #444 !important;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2) !important;
+}
+
+.dark .form-group input::placeholder {
+  color: #888 !important;
+}
+
+.dark .btn-primary {
+  background: linear-gradient(45deg, #667eea, #764ba2) !important;
+  color: white !important;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
+}
+
+.dark .btn-primary:hover {
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4) !important;
+  transform: translateY(-2px) !important;
+}
+
+.dark .login-link {
+  color: #b0b0b0 !important;
+}
+
+.dark .login-link a {
+  color: #8ab4f8 !important;
+}
+
+.dark .login-link a:hover {
+  color: #aecbfa !important;
+}
+
+.dark .message {
+  color: #ffffff !important;
+  background: #3a3a3a !important;
+  border: 1px solid #555 !important;
+}
+
+/* تحسين صورة الشاحنة في الوضع الليلي */
+.dark .truck-image {
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5)) brightness(0.9);
+}
+
+/* تحسين أزرار اللغة في الوضع الليلي */
+.dark .language-switch button {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+}
+
+.dark .language-switch button:hover {
+  background: rgba(255, 255, 255, 0.25) !important;
+}
+
+/* انتقال سلس لجميع العناصر */
+.register-container,
+.register-left,
+.register-right,
+.register-form-container,
+.form-group input,
+.form-group select,
+.btn-primary,
+.language-switch button {
+  transition: all 0.4s ease-in-out;
+}
+
+/* تنسيقات أزرار اللغة والوضع الليلي */
+.language-switch {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+  z-index: 1000;
+}
+
+.language-switch button {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.language-switch button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+/* الحفاظ على التصميم الأصلي */
+.register-container {
+  direction: ltr !important;
+}
+
+.register-left,
+.register-right,
+.register-form-container,
+.register-form,
+.form-group,
+.register-header {
+  direction: ltr !important;
+  text-align: left !important;
+}
+
+/* باقي التنسيقات الأصلية تبقى كما هي */
+/* ... */
+/* src/style/register.css */
+.register-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+/* 🌐 أزرار التحكم */
+.control-buttons {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+  z-index: 1000;
+}
+
+.control-buttons button {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  padding: 8px 12px;
+  border-radius: 20px;
+  color: white;
+  cursor: pointer;
+  font-size: 12px;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.control-buttons button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.test-btn {
+  background: #4CAF50 !important;
+}
+
+/* 🎯 محتوى الصفحة */
+.register-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 50px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* 📝 الجانب الأيسر - المعلومات */
+.register-info {
+  flex: 1;
+  color: white;
+  text-align: center;
+  max-width: 400px;
+}
+
+.truck-animation {
+  font-size: 80px;
+  margin-bottom: 20px;
+  display: inline-block;
+}
+
+.app-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 15px;
+  background: linear-gradient(45deg, #fff, #e3f2fd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.app-description {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.features {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 15px;
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+}
+
+.feature span {
+  font-size: 24px;
+}
+
+.feature p {
+  margin: 0;
+  font-weight: 500;
+}
+
+/* 📋 الجانب الأيمن - النموذج */
+.register-form-section {
+  flex: 1;
+  max-width: 450px;
+}
+
+.form-container {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.form-badge {
+  display: inline-block;
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.form-header h2 {
+  font-size: 1.8rem;
+  color: #2d3748;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.form-subtitle {
+  color: #718096;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* 📄 النماذج */
+.register-form,
+.verification-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #4a5568;
+  font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group select {
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: #f8fafc;
+  font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-group input:disabled,
+.form-group select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.form-group input::placeholder {
+  color: #a0aec0;
+}
+
+.password-hint,
+.code-hint {
+  color: #718096;
+  font-size: 0.8rem;
+  margin-top: 5px;
+}
+
+.code-hint strong {
+  color: #667eea;
+}
+
+/* 🎯 الأزرار */
+.submit-btn,
+.verify-btn {
+  padding: 14px;
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  font-family: inherit;
+}
+
+.submit-btn:hover:not(:disabled),
+.verify-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+.submit-btn:disabled,
+.verify-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.submit-btn.loading,
+.verify-btn.loading {
+  background: #a0aec0 !important;
+}
+
+.back-btn {
+  background: none;
+  border: 2px solid #e2e8f0;
+  color: #718096;
+  padding: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.back-btn:hover:not(:disabled) {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+/* 💬 الرسائل */
+.message {
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-weight: 500;
+  text-align: center;
+  margin-top: 15px;
+}
+
+.message.success {
+  background: #f0fff4;
+  color: #2d7d32;
+  border: 1px solid #9ae6b4;
+}
+
+.message.error {
+  background: #fed7d7;
+  color: #c53030;
+  border: 1px solid #feb2b2;
+}
+
+/* 🔗 الروابط */
+.auth-links {
+  text-align: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.auth-links p {
+  color: #718096;
+  font-size: 0.95rem;
+}
+
+.login-link {
+  color: #667eea;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.login-link:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+/* 🌙 الوضع الليلي */
+.register-container.dark {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+}
+
+.register-container.dark .form-container {
+  background: #2d2d2d;
+  border-color: #404040;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+}
+
+.register-container.dark .form-header h2 {
+  color: #ffffff;
+}
+
+.register-container.dark .form-subtitle {
+  color: #b0b0b0;
+}
+
+.register-container.dark .form-group label {
+  color: #e0e0e0;
+}
+
+.register-container.dark .form-group input,
+.register-container.dark .form-group select {
+  background: #3a3a3a;
+  border-color: #555;
+  color: #ffffff;
+}
+
+.register-container.dark .form-group input:focus,
+.register-container.dark .form-group select:focus {
+  background: #444;
+  border-color: #667eea;
+}
+
+.register-container.dark .form-group input::placeholder {
+  color: #888;
+}
+
+.register-container.dark .password-hint,
+.register-container.dark .code-hint {
+  color: #b0b0b0;
+}
+
+.register-container.dark .auth-links {
+  border-color: #555;
+}
+
+.register-container.dark .auth-links p {
+  color: #b0b0b0;
+}
+
+/* 📱 التصميم المتجاوب */
+@media (max-width: 768px) {
+  .register-content {
+    flex-direction: column;
+    gap: 30px;
+    padding: 20px 10px;
+  }
+  
+  .register-info {
+    max-width: 100%;
+  }
+  
+  .form-container {
+    padding: 30px 20px;
+  }
+  
+  .control-buttons {
+    position: static;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .features {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .feature {
+    flex: 1;
+    min-width: 150px;
+    flex-direction: column;
+    text-align: center;
+  }
+}

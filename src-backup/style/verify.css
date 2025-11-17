@@ -1,0 +1,356 @@
+/* verify.css */
+.otp-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 2rem;
+  position: relative;
+}
+
+.otp-card {
+  background: white;
+  padding: 3rem;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  max-width: 450px;
+  width: 100%;
+  border: 1px solid #e0e0e0;
+  backdrop-filter: blur(10px);
+}
+
+.otp-image {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 1.5rem;
+  filter: drop-shadow(0 8px 16px rgba(102, 126, 234, 0.3));
+}
+
+.otp-card h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 1rem;
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.otp-text {
+  color: #718096;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.otp-email {
+  font-weight: 600;
+  color: #667eea;
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.otp-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.otp-input {
+  padding: 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  text-align: center;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  transition: all 0.3s ease;
+  background: #f8fafc;
+  color: #2d3748;
+}
+
+.otp-input:focus {
+  outline: none;
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  transform: scale(1.02);
+}
+
+.otp-input::placeholder {
+  color: #a0aec0;
+  letter-spacing: normal;
+  font-weight: normal;
+}
+
+.otp-btn {
+  padding: 1rem;
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+}
+
+.otp-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+.otp-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 🌙 الوضع الليلي */
+.dark .otp-container {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
+}
+
+.dark .otp-card {
+  background: #2d2d2d !important;
+  border: 1px solid #404040 !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4) !important;
+}
+
+.dark .otp-card h2 {
+  color: #ffffff !important;
+  background: linear-gradient(45deg, #8ab4f8, #ba68c8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dark .otp-text {
+  color: #b0b0b0 !important;
+}
+
+.dark .otp-email {
+  color: #8ab4f8 !important;
+}
+
+.dark .otp-input {
+  background: #3a3a3a !important;
+  border: 2px solid #555 !important;
+  color: #ffffff !important;
+}
+
+.dark .otp-input:focus {
+  border-color: #8ab4f8 !important;
+  background: #444 !important;
+  box-shadow: 0 0 0 3px rgba(138, 180, 248, 0.2) !important;
+}
+
+.dark .otp-input::placeholder {
+  color: #888 !important;
+}
+
+.dark .otp-btn {
+  background: linear-gradient(45deg, #8ab4f8, #ba68c8) !important;
+  color: white !important;
+  box-shadow: 0 4px 15px rgba(138, 180, 248, 0.3) !important;
+}
+
+.dark .otp-btn:hover:not(:disabled) {
+  box-shadow: 0 8px 25px rgba(138, 180, 248, 0.4) !important;
+}
+
+/* 📱 تصميم متجاوب */
+@media (max-width: 768px) {
+  .otp-container {
+    padding: 1rem;
+  }
+  
+  .otp-card {
+    padding: 2rem 1.5rem;
+  }
+  
+  .otp-image {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .otp-card h2 {
+    font-size: 1.7rem;
+  }
+  
+  .otp-input {
+    font-size: 1.1rem;
+    padding: 0.8rem;
+  }
+}
+
+/* 🔄 حركات متحركة */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.otp-card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.otp-input:focus {
+  animation: pulse 0.3s ease;
+}
+
+/* تأثيرات إضافية للبطاقة */
+.otp-card::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #667eea, #764ba2, #667eea);
+  border-radius: 22px;
+  z-index: -1;
+  opacity: 0.1;
+}
+
+.dark .otp-card::before {
+  background: linear-gradient(45deg, #8ab4f8, #ba68c8, #8ab4f8);
+  opacity: 0.2;
+}
+
+/* تصميم خاص لحقل OTP */
+.otp-input-group {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.otp-input {
+  width: 100%;
+  max-width: 250px;
+  margin: 0 auto;
+  font-family: 'Courier New', monospace;
+}
+
+/* رسائل التنبيه */
+.message {
+  padding: 1rem;
+  border-radius: 10px;
+  margin: 1rem 0;
+  font-weight: 600;
+  text-align: center;
+}
+
+.message.success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.message.error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.dark .message.success {
+  background: rgba(34, 197, 94, 0.2);
+  color: #86efac;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.dark .message.error {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* أزرار اللغة والوضع الليلي */
+.language-switch {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+  z-index: 1000;
+}
+
+.language-switch button {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.language-switch button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.dark .language-switch button {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+}
+
+.dark .language-switch button:hover {
+  background: rgba(255, 255, 255, 0.25) !important;
+}
+
+/* تأثيرات متقدمة */
+.otp-input:valid {
+  border-color: #48bb78;
+  background: #f0fff4;
+}
+
+.dark .otp-input:valid {
+  border-color: #68d391;
+  background: rgba(72, 187, 120, 0.1);
+}
+
+/* مؤشر الكتابة المتحرك */
+.otp-input {
+  caret-color: #667eea;
+}
+
+.dark .otp-input {
+  caret-color: #8ab4f8;
+}
+
+/* تأثير عند اكتمال الرمز */
+.otp-input:not(:placeholder-shown) {
+  background: #f0fff4;
+  border-color: #48bb78;
+}
+
+.dark .otp-input:not(:placeholder-shown) {
+  background: rgba(72, 187, 120, 0.1);
+  border-color: #68d391;
+}

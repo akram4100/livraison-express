@@ -1,0 +1,85 @@
+/* 🌈 خلفية عامة */
+.verify-bg {
+  height: 100vh;
+  background: linear-gradient(135deg, #60a5fa, #818cf8, #a78bfa);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Poppins", sans-serif;
+}
+
+/* 🧾 البطاقة */
+.verify-card {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  width: 380px;
+  text-align: center;
+  animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.verify-card h1 {
+  font-size: 1.6rem;
+  color: #1e3a8a;
+  margin-bottom: 8px;
+}
+
+.verify-card p {
+  color: #555;
+  margin-bottom: 20px;
+}
+
+/* 🔤 الحقول */
+.verify-card input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.verify-card input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 6px rgba(37, 99, 235, 0.4);
+}
+
+/* 🔘 الزر */
+.verify-card button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  background: linear-gradient(90deg, #2563eb, #1e3a8a);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.verify-card button:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(90deg, #1e3a8a, #2563eb);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.5);
+}
+
+/* 📩 الرسالة */
+.verify-message {
+  margin-top: 16px;
+  font-weight: 600;
+  color: #1e3a8a;
+}

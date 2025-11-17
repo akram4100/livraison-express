@@ -394,3 +394,4 @@ const toggleDarkMode = () => {
 };
 
 export default Register;
+

@@ -1,0 +1,321 @@
+/* resetPassword.css */
+.reset-password-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 2rem;
+  position: relative;
+}
+
+.reset-password-card {
+  background: white;
+  padding: 3rem;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  max-width: 450px;
+  width: 100%;
+  border: 1px solid #e0e0e0;
+  backdrop-filter: blur(10px);
+}
+
+.reset-image {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 1.5rem;
+  filter: drop-shadow(0 8px 16px rgba(102, 126, 234, 0.3));
+}
+
+.reset-password-card h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 1rem;
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.reset-text {
+  color: #718096;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.reset-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #4a5568;
+  font-size: 0.95rem;
+}
+
+.form-group input {
+  padding: 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: #f8fafc;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-group input::placeholder {
+  color: #a0aec0;
+}
+
+.reset-btn {
+  padding: 1rem;
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+}
+
+.reset-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+.reset-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.back-login {
+  margin-top: 2rem;
+  color: #718096;
+  font-size: 0.95rem;
+}
+
+.back-login a {
+  color: #667eea;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.back-login a:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+/* 🌙 الوضع الليلي */
+.dark .reset-password-container {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
+}
+
+.dark .reset-password-card {
+  background: #2d2d2d !important;
+  border: 1px solid #404040 !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4) !important;
+}
+
+.dark .reset-password-card h2 {
+  color: #ffffff !important;
+  background: linear-gradient(45deg, #8ab4f8, #ba68c8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dark .reset-text {
+  color: #b0b0b0 !important;
+}
+
+.dark .form-group label {
+  color: #e0e0e0 !important;
+}
+
+.dark .form-group input {
+  background: #3a3a3a !important;
+  border: 2px solid #555 !important;
+  color: #ffffff !important;
+}
+
+.dark .form-group input:focus {
+  border-color: #8ab4f8 !important;
+  background: #444 !important;
+  box-shadow: 0 0 0 3px rgba(138, 180, 248, 0.2) !important;
+}
+
+.dark .form-group input::placeholder {
+  color: #888 !important;
+}
+
+.dark .reset-btn {
+  background: linear-gradient(45deg, #8ab4f8, #ba68c8) !important;
+  color: white !important;
+  box-shadow: 0 4px 15px rgba(138, 180, 248, 0.3) !important;
+}
+
+.dark .reset-btn:hover:not(:disabled) {
+  box-shadow: 0 8px 25px rgba(138, 180, 248, 0.4) !important;
+}
+
+.dark .back-login {
+  color: #b0b0b0 !important;
+}
+
+.dark .back-login a {
+  color: #8ab4f8 !important;
+}
+
+.dark .back-login a:hover {
+  color: #aecbfa !important;
+}
+
+/* 📱 تصميم متجاوب */
+@media (max-width: 768px) {
+  .reset-password-container {
+    padding: 1rem;
+  }
+  
+  .reset-password-card {
+    padding: 2rem 1.5rem;
+  }
+  
+  .reset-image {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .reset-password-card h2 {
+    font-size: 1.7rem;
+  }
+}
+
+/* 🔄 حركات متحركة */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reset-password-card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* رسائل التنبيه */
+.message {
+  padding: 1rem;
+  border-radius: 10px;
+  margin: 1rem 0;
+  font-weight: 600;
+  text-align: center;
+}
+
+.message.success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.message.error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.dark .message.success {
+  background: rgba(34, 197, 94, 0.2);
+  color: #86efac;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.dark .message.error {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* أزرار اللغة والوضع الليلي */
+.language-switch {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+  z-index: 1000;
+}
+
+.language-switch button {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.language-switch button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.dark .language-switch button {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+}
+
+.dark .language-switch button:hover {
+  background: rgba(255, 255, 255, 0.25) !important;
+}
+
+/* تأثيرات إضافية */
+.reset-password-card::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #667eea, #764ba2, #667eea);
+  border-radius: 22px;
+  z-index: -1;
+  opacity: 0.1;
+}
+
+.dark .reset-password-card::before {
+  background: linear-gradient(45deg, #8ab4f8, #ba68c8, #8ab4f8);
+  opacity: 0.2;
+}

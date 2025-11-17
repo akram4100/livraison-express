@@ -1,13 +1,14 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.livraison.express',
-  appName: 'LivraisonMobile',
-  webDir: 'build',
-  bundledWebRuntime: false,
+  appId: 'com.akram.livraison',
+  appName: 'Livraison Express',
+  webDir: 'www',
   server: {
     androidScheme: 'https',
-    iosScheme: 'https'
+    // 🔥 هذا السطر الحاسم لحل مشكلة الاتصال
+    url: 'http://localhost:8080',
+    cleartext: true
   },
   plugins: {
     Camera: {
