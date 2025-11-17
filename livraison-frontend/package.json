@@ -1,65 +1,7 @@
 {
-  "name": "livraison-frontend",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@capacitor/android": "^7.4.4",
-    "@capacitor/camera": "^7.0.2",
-    "@capacitor/cli": "^7.4.4",
-    "@capacitor/core": "^7.4.4",
-    "@capacitor/geolocation": "^7.1.5",
-    "@capacitor/ios": "^7.4.4",
-    "@capacitor/push-notifications": "^7.0.3",
-    "@emailjs/browser": "^4.4.1",
-    "@firebase/auth": "^1.11.1",
-    "@firebase/firestore": "^4.9.2",
-    "@headlessui/react": "^2.2.9",
-    "@testing-library/dom": "^10.4.1",
-    "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^16.3.0",
-    "@testing-library/user-event": "^13.5.0",
-    "axios": "^1.12.2",
-    "firebase": "^12.5.0",
-    "framer-motion": "^12.23.24",
-    "i18next": "^25.6.1",
-    "mysql2": "^3.15.3",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "react-i18next": "^16.2.4",
-    "react-router-dom": "^7.9.4",
-    "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
-  },
+  "name": "livraison-api",
+  "main": "server.js",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "devDependencies": {
-    "@types/react": "^19.2.2",
-    "@types/react-dom": "^19.2.2",
-    "autoprefixer": "^10.4.21",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^3.4.18",
-    "typescript": "^5.9.3"
+    "start": "node server.js"
   }
 }
