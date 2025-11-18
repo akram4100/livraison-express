@@ -24,14 +24,12 @@ export default function Login({ globalDarkMode, updateGlobalDarkMode }) {
 
   // 🔹 محاكاة الإحصائيات الحية
   useEffect(() => {
-    // بيانات أولية واقعية
     setStats({
       users: 1247,
       visitors: 8563,
       orders: 2894
     });
 
-    // محاكاة تحديث البيانات كل 3 ثواني
     const interval = setInterval(() => {
       setStats(prev => ({
         users: prev.users + Math.floor(Math.random() * 3),
@@ -51,7 +49,6 @@ export default function Login({ globalDarkMode, updateGlobalDarkMode }) {
     setDarkMode(savedDarkMode);
     i18n.changeLanguage(savedLanguage);
     
-    // إذا كانت هناك props من المكون الأب، استخدمها
     if (updateGlobalDarkMode) {
       updateGlobalDarkMode(savedDarkMode);
     }
@@ -69,7 +66,6 @@ export default function Login({ globalDarkMode, updateGlobalDarkMode }) {
     setDarkMode(newDarkMode);
     localStorage.setItem('darkMode', newDarkMode.toString());
     
-    // تحديث الوضع الليلي عالمياً إذا كانت الدالة متاحة
     if (updateGlobalDarkMode) {
       updateGlobalDarkMode(newDarkMode);
     }
@@ -82,7 +78,7 @@ export default function Login({ globalDarkMode, updateGlobalDarkMode }) {
     console.log("🔐 Tentative de connexion:", { email, motDePasse });
 
     try {
-      const response = await fetch("http://livraison-api-x45n.onrender.com/api/login", {
+      const response = await fetch("http://localhost:8080/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, mot_de_passe: motDePasse }),
@@ -106,20 +102,20 @@ export default function Login({ globalDarkMode, updateGlobalDarkMode }) {
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("token", "user-token");
 
-// توجيه إلى الداشبورد المناسب
-switch(data.user.role) {
-  case 'admin':
-    navigate('/dashboard-admin');  // 🔹 غير إلى حروف صغيرة
-    break;
-  case 'livreur':
-    navigate('/dashboard-livreur');  // 🔹 غير إلى حروف صغيرة
-    break;
-  case 'client':
-    navigate('/dashboard-client');  // 🔹 غير إلى حروف صغيرة
-    break;
-  default:
-    navigate('/dashboard-client');  // 🔹 غير إلى حروف صغيرة
-}
+      // توجيه إلى الداشبورد المناسب
+      switch(data.user.role) {
+        case 'admin':
+          navigate('/dashboard-admin');
+          break;
+        case 'livreur':
+          navigate('/dashboard-livreur');
+          break;
+        case 'client':
+          navigate('/dashboard-client');
+          break;
+        default:
+          navigate('/dashboard-client');
+      }
 
     } catch (error) {
       console.error("❌ Erreur:", error);
@@ -135,7 +131,7 @@ switch(data.user.role) {
     if (!email) return alert("Veuillez entrer votre adresse email !");
 
     try {
-      const response = await fetch("http://livraison-api-x45n.onrender.com/api/send-reset-code", {
+      const response = await fetch("http://localhost:8080/api/send-reset-code", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -326,4 +322,3 @@ switch(data.user.role) {
     </div>
   );
 }
-

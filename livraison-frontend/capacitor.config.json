@@ -1,0 +1,9 @@
+{
+  "appId": "com.akram.livraison",
+  "appName": "Livraison Express",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "cleartext": true
+  }
+}

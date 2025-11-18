@@ -1,25 +1,26 @@
-// src/pages/Register.jsx
-import React, { useState, useEffect }  from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import "../style/register.css";
 
 const Register = ({ globalDarkMode, updateGlobalDarkMode }) => {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
   const [darkMode, setDarkMode] = useState(false);
+  
   // 🔹 مزامنة الوضع الليلي واللغة مع الإعدادات العالمية
-useEffect(() => {
-  const savedDarkMode = localStorage.getItem('darkMode') === 'true';
-  const savedLanguage = localStorage.getItem('preferredLanguage') || 'fr';
-  
-  setDarkMode(savedDarkMode);
-  i18n.changeLanguage(savedLanguage);
-  
-  // إذا كانت هناك props من المكون الأب، استخدمها
-  if (updateGlobalDarkMode) {
-    updateGlobalDarkMode(savedDarkMode);
-  }
-}, [i18n, updateGlobalDarkMode]);
+  useEffect(() => {
+    const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+    const savedLanguage = localStorage.getItem('preferredLanguage') || 'fr';
+    
+    setDarkMode(savedDarkMode);
+    i18n.changeLanguage(savedLanguage);
+    
+    if (updateGlobalDarkMode) {
+      updateGlobalDarkMode(savedDarkMode);
+    }
+  }, [i18n, updateGlobalDarkMode]);
 
   // حالة النموذج
   const [formData, setFormData] = useState({
@@ -34,25 +35,26 @@ useEffect(() => {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // 🔹 إعدادات API - مصحح
-  const API_BASE = "http://livraison-api-x45n.onrender.com/api";
+  // 🔹 إعدادات API
+  const API_BASE = "http://localhost:8080/api";
 
-  // 🌍 تغيير اللغة
+  // 🌍 تغيير اللغة مع الحفظ
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
+    localStorage.setItem('preferredLanguage', lang);
   };
 
-// 🎨 تبديل الوضع الليلي مع الحفظ
-const toggleDarkMode = () => {
-  const newDarkMode = !darkMode;
-  setDarkMode(newDarkMode);
-  localStorage.setItem('darkMode', newDarkMode.toString());
-  
-  // تحديث الوضع الليلي عالمياً إذا كانت الدالة متاحة
-  if (updateGlobalDarkMode) {
-    updateGlobalDarkMode(newDarkMode);
-  }
-};
+  // 🎨 تبديل الوضع الليلي مع الحفظ
+  const toggleDarkMode = () => {
+    const newDarkMode = !darkMode;
+    setDarkMode(newDarkMode);
+    localStorage.setItem('darkMode', newDarkMode.toString());
+    
+    if (updateGlobalDarkMode) {
+      updateGlobalDarkMode(newDarkMode);
+    }
+  };
+
   // ✏️ تحديث بيانات النموذج
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -145,7 +147,7 @@ const toggleDarkMode = () => {
         
         // الانتقال لصفحة Login بعد نجاح التحقق
         setTimeout(() => {
-          window.location.href = "/login";
+          navigate("/login");
         }, 2000);
       } else {
         setMessage("❌ " + (data.message || t("verification_failed")));
@@ -161,7 +163,7 @@ const toggleDarkMode = () => {
   // 🔗 اختبار اتصال السيرفر
   const testServerConnection = async () => {
     try {
-      const response = await fetch("http://livraison-api-x45n.onrender.com/");
+      const response = await fetch("http://localhost:8080/");
       const data = await response.text();
       alert("✅ السيرفر يعمل: " + data);
     } catch (error) {
@@ -171,16 +173,16 @@ const toggleDarkMode = () => {
 
   return (
     <div className={`register-container ${darkMode ? "dark" : ""}`}>
-      {/* 🌐 أزرار التحكم */}
-      <div className="control-buttons">
-        <button onClick={() => changeLanguage("fr")}>🇫🇷 FR</button>
-        <button onClick={() => changeLanguage("en")}>🇬🇧 EN</button>
-        <button onClick={() => changeLanguage("ar")}>🇸🇦 AR</button>
+      {/* 🌐 أزرار اللغة والوضع */}
+      <div className={`language-switch ${i18n.language === "ar" ? "rtl" : "ltr"}`}>
+        <button onClick={() => changeLanguage("fr")}>🇫🇷</button>
+        <button onClick={() => changeLanguage("en")}>🇬🇧</button>
+        <button onClick={() => changeLanguage("ar")}>🇸🇦</button>
         <button onClick={toggleDarkMode}>
-          {darkMode ? "☀️ Light" : "🌙 Dark"}
+          {darkMode ? "☀️" : "🌙"}
         </button>
         <button onClick={testServerConnection} className="test-btn">
-          🔗 Test Server
+          🔗
         </button>
       </div>
 
@@ -211,21 +213,21 @@ const toggleDarkMode = () => {
           
           <h1 className="app-title">Livraison Express</h1>
           <p className="app-description">
-            {t("register_subtitle")}
+            {t("register_subtitle") || "Rejoignez notre plateforme de livraison express"}
           </p>
           
           <div className="features">
             <div className="feature">
               <span>⚡</span>
-              <p>{t("fast_delivery")}</p>
+              <p>{t("fast_delivery") || "Livraison rapide"}</p>
             </div>
             <div className="feature">
               <span>🔒</span>
-              <p>{t("secure_service")}</p>
+              <p>{t("secure_service") || "Service sécurisé"}</p>
             </div>
             <div className="feature">
               <span>🌍</span>
-              <p>{t("wide_coverage")}</p>
+              <p>{t("wide_coverage") || "Couverture étendue"}</p>
             </div>
           </div>
         </motion.div>
@@ -242,11 +244,14 @@ const toggleDarkMode = () => {
             {/* 🎫 رأس النموذج */}
             <div className="form-header">
               <div className="form-badge">
-                {isVerifying ? "📧 " + t("verification") : "🚀 " + t("registration")}
+                {isVerifying ? "📧 " + (t("verification") || "Vérification") : "🚀 " + (t("registration") || "Inscription")}
               </div>
-              <h2>{isVerifying ? t("email_verification") : t("create_account")}</h2>
+              <h2>{isVerifying ? (t("email_verification") || "Vérification d'email") : (t("create_account") || "Créer un compte")}</h2>
               <p className="form-subtitle">
-                {isVerifying ? t("enter_verification_code") : t("create_account_seconds")}
+                {isVerifying ? 
+                  (t("enter_verification_code") || "Entrez le code de vérification envoyé à votre email") : 
+                  (t("create_account_seconds") || "Créez votre compte en quelques secondes")
+                }
               </p>
             </div>
 
@@ -254,12 +259,12 @@ const toggleDarkMode = () => {
             {!isVerifying ? (
               <form className="register-form" onSubmit={handleRegister}>
                 <div className="form-group">
-                  <label htmlFor="nom">{t("full_name")} *</label>
+                  <label htmlFor="nom">{t("full_name") || "Nom complet"} *</label>
                   <input
                     id="nom"
                     type="text"
                     name="nom"
-                    placeholder={t("enter_full_name")}
+                    placeholder={t("enter_full_name") || "Entrez votre nom complet"}
                     value={formData.nom}
                     onChange={handleChange}
                     required
@@ -268,12 +273,12 @@ const toggleDarkMode = () => {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="email">{t("email_address")} *</label>
+                  <label htmlFor="email">{t("email_address") || "Adresse email"} *</label>
                   <input
                     id="email"
                     type="email"
                     name="email"
-                    placeholder={t("email_placeholder")}
+                    placeholder={t("email_placeholder") || "Entrez votre email"}
                     value={formData.email}
                     onChange={handleChange}
                     required
@@ -282,12 +287,12 @@ const toggleDarkMode = () => {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="mot_de_passe">{t("password")} *</label>
+                  <label htmlFor="mot_de_passe">{t("password") || "Mot de passe"} *</label>
                   <input
                     id="mot_de_passe"
                     type="password"
                     name="mot_de_passe"
-                    placeholder={t("create_secure_password")}
+                    placeholder={t("create_secure_password") || "Créez un mot de passe sécurisé"}
                     value={formData.mot_de_passe}
                     onChange={handleChange}
                     required
@@ -295,12 +300,12 @@ const toggleDarkMode = () => {
                     disabled={loading}
                   />
                   <small className="password-hint">
-                    {t("password_minimum")}
+                    {t("password_minimum") || "Minimum 6 caractères"}
                   </small>
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="role">{t("role")} *</label>
+                  <label htmlFor="role">{t("role") || "Rôle"} *</label>
                   <select
                     id="role"
                     name="role"
@@ -308,8 +313,8 @@ const toggleDarkMode = () => {
                     onChange={handleChange}
                     disabled={loading}
                   >
-                    <option value="client">{t("client")}</option>
-                    <option value="livreur">{t("delivery_person")}</option>
+                    <option value="client">{t("client") || "Client"}</option>
+                    <option value="livreur">{t("delivery_person") || "Livreur"}</option>
                   </select>
                 </div>
 
@@ -320,28 +325,31 @@ const toggleDarkMode = () => {
                   whileHover={{ scale: loading ? 1 : 1.02 }}
                   whileTap={{ scale: loading ? 1 : 0.98 }}
                 >
-                  {loading ? "⏳ " + t("processing") : "✅ " + t("sign_up")}
+                  {loading ? 
+                    "⏳ " + (t("processing") || "Traitement...") : 
+                    "✅ " + (t("sign_up") || "S'inscrire")
+                  }
                 </motion.button>
               </form>
             ) : (
               /* 🔐 نموذج التحقق */
               <form className="verification-form" onSubmit={handleVerifyCode}>
                 <div className="form-group">
-                  <label htmlFor="verificationCode">{t("verification_code")} *</label>
+                  <label htmlFor="verificationCode">{t("verification_code") || "Code de vérification"} *</label>
                   <input
                     id="verificationCode"
                     type="text"
-                    placeholder={t("enter_6_digit_code")}
+                    placeholder={t("enter_6_digit_code") || "Entrez le code à 6 chiffres"}
                     value={verificationCode}
                     onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, ''))}
                     maxLength="6"
                     required
                     disabled={loading}
                     pattern="[0-9]{6}"
-                    title={t("six_digits_only")}
+                    title={t("six_digits_only") || "6 chiffres uniquement"}
                   />
                   <small className="code-hint">
-                    {t("check_your_email")}: <strong>{formData.email}</strong>
+                    {t("check_your_email") || "Vérifiez votre email"}: <strong>{formData.email}</strong>
                   </small>
                 </div>
 
@@ -352,7 +360,10 @@ const toggleDarkMode = () => {
                   whileHover={{ scale: loading ? 1 : 1.02 }}
                   whileTap={{ scale: loading ? 1 : 0.98 }}
                 >
-                  {loading ? "⏳ " + t("verifying") : "🔐 " + t("verify_email")}
+                  {loading ? 
+                    "⏳ " + (t("verifying") || "Vérification...") : 
+                    "🔐 " + (t("verify_email") || "Vérifier l'email")
+                  }
                 </motion.button>
 
                 <button
@@ -361,7 +372,7 @@ const toggleDarkMode = () => {
                   onClick={() => setIsVerifying(false)}
                   disabled={loading}
                 >
-                  ↩️ {t("back_to_register")}
+                  ↩️ {t("back_to_register") || "Retour à l'inscription"}
                 </button>
               </form>
             )}
@@ -380,18 +391,82 @@ const toggleDarkMode = () => {
             {/* 🔗 رابط تسجيل الدخول */}
             <div className="auth-links">
               <p>
-                {t("already_have_account")}{" "}
+                {t("already_have_account") || "Vous avez déjà un compte ?"}{" "}
                 <a href="/login" className="login-link">
-                  {t("sign_in")}
+                  {t("sign_in") || "Se connecter"}
                 </a>
               </p>
             </div>
           </div>
         </motion.div>
       </div>
+
+      {/* الـ CSS الإضافي */}
+      <style jsx>{`
+        .register-container {
+          position: relative;
+          min-height: 100vh;
+        }
+
+        .language-switch {
+          position: absolute;
+          top: 20px;
+          right: 20px;
+          display: flex;
+          gap: 10px;
+          z-index: 1000;
+        }
+
+        .language-switch.rtl {
+          right: auto;
+          left: 20px;
+        }
+
+        .language-switch button {
+          background: rgba(255, 255, 255, 0.2);
+          border: none;
+          padding: 8px 12px;
+          border-radius: 8px;
+          cursor: pointer;
+          color: white;
+          font-size: 1rem;
+          backdrop-filter: blur(10px);
+          transition: all 0.3s ease;
+        }
+
+        .language-switch button:hover {
+          background: rgba(255, 255, 255, 0.3);
+          transform: scale(1.1);
+        }
+
+        .test-btn {
+          background: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .test-btn:hover {
+          background: rgba(255, 255, 255, 0.2) !important;
+        }
+
+        @media (max-width: 768px) {
+          .language-switch {
+            top: 10px;
+            right: 10px;
+            gap: 5px;
+          }
+          
+          .language-switch.rtl {
+            right: auto;
+            left: 10px;
+          }
+          
+          .language-switch button {
+            padding: 6px 8px;
+            font-size: 0.9rem;
+          }
+        }
+      `}</style>
     </div>
   );
 };
 
 export default Register;
-

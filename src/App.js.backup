@@ -1,0 +1,15 @@
+// src/App.js - أضف هذا في بداية الملف للتحقق
+import { Capacitor } from '@capacitor/core';
+
+console.log('📱 Capacitor platform:', Capacitor.getPlatform());
+console.log('🌐 API Base URL check...');
+
+// اختبار الاتصال عند بدء التطبيق
+fetch('http://192.168.1.100:8080/')
+  .then(response => {
+    console.log('✅ Server connection successful');
+    return response.text();
+  })
+  .catch(error => {
+    console.log('❌ Server connection failed:', error.message);
+  });

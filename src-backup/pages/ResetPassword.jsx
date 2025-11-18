@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useLocation } from "react-router-dom";
-import "../style/reset.css";
+import "../style/reset-password.css";
 
 const ResetPassword = ({ globalDarkMode, updateGlobalDarkMode }) => {
   const { t, i18n } = useTranslation();
   const [darkMode, setDarkMode] = useState(false);
-  const [nouveauMotDePasse, setNouveauMotDePasse] = useState("");
-  const [confirmerMotDePasse, setConfirmerMotDePasse] = useState("");
-  const [message, setMessage] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   
   const navigate = useNavigate();
@@ -46,26 +45,19 @@ const ResetPassword = ({ globalDarkMode, updateGlobalDarkMode }) => {
     }
   };
 
-  // 🔐 إعادة تعيين كلمة المرور
   const handleResetPassword = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage("");
 
-    if (!nouveauMotDePasse || !confirmerMotDePasse) {
-      setMessage("❌ " + t("fill_all_fields"));
+    // 🔒 التحقق من كلمة المرور
+    if (newPassword.length < 6) {
+      alert("❌ " + t("password_min_length"));
       setLoading(false);
       return;
     }
 
-    if (nouveauMotDePasse.length < 6) {
-      setMessage("❌ " + t("password_min_length"));
-      setLoading(false);
-      return;
-    }
-
-    if (nouveauMotDePasse !== confirmerMotDePasse) {
-      setMessage("❌ " + t("passwords_not_match"));
+    if (newPassword !== confirmPassword) {
+      alert("❌ " + t("passwords_do_not_match"));
       setLoading(false);
       return;
     }
@@ -76,30 +68,29 @@ const ResetPassword = ({ globalDarkMode, updateGlobalDarkMode }) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           email, 
-          nouveauMotDePasse 
+          nouveauMotDePasse: newPassword 
         }),
       });
 
       const data = await response.json();
 
-      if (response.ok) {
-        setMessage("✅ " + data.message);
-        setTimeout(() => {
-          navigate("/login");
-        }, 2000);
-      } else {
-        setMessage("❌ " + (data.message || t("reset_failed")));
+      if (!response.ok) {
+        alert(data.message || "❌ " + t("reset_failed"));
+        return;
       }
+
+      alert("✅ " + t("password_reset_success"));
+      navigate("/login");
     } catch (error) {
       console.error("❌ Erreur:", error);
-      setMessage("❌ " + t("connection_error"));
+      alert("❌ " + t("connection_error"));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className={`reset-password-container ${darkMode ? "dark" : ""}`}>
+    <div className={`reset-container ${darkMode ? "dark" : ""}`}>
       {/* 🌐 أزرار اللغة والوضع */}
       <div className={`language-switch ${i18n.language === "ar" ? "rtl" : "ltr"}`}>
         <button onClick={() => changeLanguage("fr")}>🇫🇷</button>
@@ -111,69 +102,86 @@ const ResetPassword = ({ globalDarkMode, updateGlobalDarkMode }) => {
       </div>
 
       <motion.div
-        className="reset-password-card"
+        className="reset-card"
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
         <img src="/reset-password.png" alt="Reset Password" className="reset-image" />
-        
+
         <h2>{t("reset_password")}</h2>
         <p className="reset-text">
-          {t("create_new_password")}
+          {t("create_new_password_for")}  
+          <span className="reset-email">{email}</span>
         </p>
 
         <form onSubmit={handleResetPassword} className="reset-form">
+          {/* 🔒 كلمة المرور الجديدة */}
           <div className="form-group">
-            <label htmlFor="nouveauMotDePasse">{t("new_password")}</label>
+            <label htmlFor="newPassword">{t("new_password")}</label>
             <input
-              id="nouveauMotDePasse"
+              id="newPassword"
               type="password"
               placeholder={t("enter_new_password")}
-              value={nouveauMotDePasse}
-              onChange={(e) => setNouveauMotDePasse(e.target.value)}
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              className="password-input"
               required
+              minLength="6"
               disabled={loading}
             />
+            <small className="password-hint">
+              {t("password_minimum")}
+            </small>
           </div>
 
+          {/* 🔒 تأكيد كلمة المرور */}
           <div className="form-group">
-            <label htmlFor="confirmerMotDePasse">{t("confirm_password")}</label>
+            <label htmlFor="confirmPassword">{t("confirm_password")}</label>
             <input
-              id="confirmerMotDePasse"
+              id="confirmPassword"
               type="password"
               placeholder={t("confirm_new_password")}
-              value={confirmerMotDePasse}
-              onChange={(e) => setConfirmerMotDePasse(e.target.value)}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="password-input"
               required
+              minLength="6"
               disabled={loading}
             />
           </div>
 
+          {/* 🚀 زر إعادة التعيين */}
           <motion.button
             type="submit"
             className="reset-btn"
             whileHover={{ scale: loading ? 1 : 1.03 }}
             whileTap={{ scale: loading ? 1 : 0.97 }}
+            disabled={loading || newPassword.length < 6 || newPassword !== confirmPassword}
+          >
+            {loading ? "⏳ " + t("resetting") : "🔐 " + t("reset_password")}
+          </motion.button>
+
+          {/* ↩️ العودة لتسجيل الدخول */}
+          <button
+            type="button"
+            className="back-btn"
+            onClick={() => navigate("/login")}
             disabled={loading}
           >
-            {loading ? "⏳ " + t("resetting") : t("reset_password_button")}
-          </motion.button>
+            ↩️ {t("back_to_login")}
+          </button>
         </form>
 
-        {message && (
-          <motion.div 
-            className={`message ${message.includes('✅') ? 'success' : 'error'}`}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            {message}
-          </motion.div>
-        )}
-
-        <p className="back-login">
-          <a href="/login">{t("back_to_login")}</a>
-        </p>
+        {/* 💡 نصائح أمان */}
+        <div className="security-tips">
+          <h4>🔒 {t("security_tips")}</h4>
+          <ul>
+            <li>{t("use_strong_password")}</li>
+            <li>{t("avoid_common_words")}</li>
+            <li>{t("include_numbers_symbols")}</li>
+          </ul>
+        </div>
       </motion.div>
     </div>
   );

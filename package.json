@@ -1,23 +1,16 @@
 {
-  "name": "livraison-backend",
+  "name": "livraison-project",
   "version": "1.0.0",
-  "description": "",
-  "type": "module",
-  "main": "server.js",
+  "description": "Livraison Express - Full Stack Delivery App",
   "scripts": {
-    "start": "node server.js"
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd backend && npm run dev",
+    "client": "cd livraison-frontend && npm start",
+    "build": "cd livraison-frontend && npm run build",
+    "android": "cd livraison-frontend && npx cap run android",
+    "install-all": "npm install && cd backend && npm install && cd ../livraison-frontend && npm install"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@emailjs/nodejs": "^5.0.2",
-    "bcryptjs": "^3.0.2",
-    "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
-    "express": "^5.1.0",
-    "jsonwebtoken": "^9.0.2",
-    "mysql2": "^3.15.3",
-    "nodemailer": "^7.0.10"
+  "devDependencies": {
+    "concurrently": "^7.6.0"
   }
 }
