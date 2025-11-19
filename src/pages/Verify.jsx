@@ -2,9 +2,10 @@ import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import "../style/verify.css";
 
-const VerifyOtp = () => {
-  const { t } = useTranslation();
+const VerifyOtp = ({ globalDarkMode, updateGlobalDarkMode }) => {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -14,14 +15,45 @@ const VerifyOtp = () => {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
+  const [darkMode, setDarkMode] = useState(false);
   const inputsRef = useRef([]);
+
+  // 🔹 مزامنة الوضع الليلي مع الإعدادات العالمية
+  useEffect(() => {
+    const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+    const savedLanguage = localStorage.getItem('preferredLanguage') || 'fr';
+    
+    setDarkMode(savedDarkMode);
+    i18n.changeLanguage(savedLanguage); // دع i18n يتعامل مع اللغة
+    
+    if (updateGlobalDarkMode) {
+      updateGlobalDarkMode(savedDarkMode);
+    }
+  }, [i18n, updateGlobalDarkMode]);
+
+  // 🌍 تغيير اللغة مع الحفظ (مبسط)
+  const changeLanguage = (lang) => {
+    console.log('🔄 تغيير اللغة إلى:', lang);
+    i18n.changeLanguage(lang);
+    // لا تفعل أي شيء آخر - i18n.js سيتعامل مع الباقي
+  };
+
+  // 🎨 تبديل الوضع الليلي مع الحفظ
+  const toggleDarkMode = () => {
+    const newDarkMode = !darkMode;
+    setDarkMode(newDarkMode);
+    localStorage.setItem('darkMode', newDarkMode.toString());
+    
+    if (updateGlobalDarkMode) {
+      updateGlobalDarkMode(newDarkMode);
+    }
+  };
 
   // 📧 الحصول على الإيميل من location state
   useEffect(() => {
     if (location.state?.email) {
       setEmail(location.state.email);
     } else {
-      // إذا لم يتم تمرير الإيميل، ارجع للصفحة السابقة
       navigate("/forgot-password");
     }
   }, [location, navigate]);
@@ -45,9 +77,8 @@ const VerifyOtp = () => {
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
-    setError(""); // مسح الخطأ عند الإدخال
+    setError("");
 
-    // الانتقال التلقائي للحقل التالي
     if (value !== "" && index < 5) {
       inputsRef.current[index + 1].focus();
     }
@@ -65,7 +96,7 @@ const VerifyOtp = () => {
     const enteredOtp = otp.join("");
     
     if (enteredOtp.length !== 6) {
-      setError("الرجاء إدخال رمز OTP كامل");
+      setError(t("enter_full_otp"));
       return;
     }
 
@@ -80,14 +111,13 @@ const VerifyOtp = () => {
         },
         body: JSON.stringify({
           email: email,
-          code: enteredOpt
+          code: enteredOtp
         }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        // ✅ OTP صحيح - الانتقال لصفحة إعادة تعيين كلمة المرور
         navigate("/reset-password", { 
           state: { 
             email: email,
@@ -95,11 +125,11 @@ const VerifyOtp = () => {
           }
         });
       } else {
-        setError(data.message || "رمز التحقق غير صحيح");
+        setError(data.message || t("invalid_otp"));
       }
     } catch (error) {
       console.error("❌ خطأ في التحقق من OTP:", error);
-      setError("خطأ في الاتصال بالخادم");
+      setError(t("connection_error"));
     } finally {
       setLoading(false);
     }
@@ -126,27 +156,36 @@ const VerifyOtp = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // إعادة تعيين العداد والحقول
         setTimer(60);
         setCanResend(false);
         setOtp(["", "", "", "", "", ""]);
         setError("");
         inputsRef.current[0].focus();
         
-        alert("✅ تم إعادة إرسال رمز التحقق إلى بريدك الإلكتروني");
+        alert(t("otp_resent_success"));
       } else {
-        setError(data.message || "فشل في إعادة إرسال الرمز");
+        setError(data.message || t("resend_failed"));
       }
     } catch (error) {
       console.error("❌ خطأ في إعادة إرسال OTP:", error);
-      setError("خطأ في الاتصال بالخادم");
+      setError(t("connection_error"));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="verify-otp-page">
+    <div className={`verify-otp-page ${darkMode ? "dark" : ""}`}>
+      {/* 🌐 أزرار اللغة والوضع */}
+      <div className={`language-switch ${i18n.language === "ar" ? "rtl" : "ltr"}`}>
+        <button onClick={() => changeLanguage("fr")}>🇫🇷</button>
+        <button onClick={() => changeLanguage("en")}>🇬🇧</button>
+        <button onClick={() => changeLanguage("ar")}>🇸🇦</button>
+        <button onClick={toggleDarkMode}>
+          {darkMode ? "☀️" : "🌙"}
+        </button>
+      </div>
+
       <motion.div 
         className="otp-container"
         initial={{ opacity: 0, y: 20 }}
@@ -163,8 +202,8 @@ const VerifyOtp = () => {
           >
             🔐
           </motion.div>
-          <h2>تحقق من رمز OTP</h2>
-          <p>أدخل الرمز المكون من 6 أرقام الذي أرسلناه إلى:</p>
+          <h2>{t("verify_otp")}</h2>
+          <p>{t("enter_otp_sent")}</p>
           <p className="email-display">{email}</p>
         </div>
 
@@ -212,198 +251,34 @@ const VerifyOtp = () => {
           transition={{ delay: 0.8 }}
           disabled={loading}
         >
-          {loading ? "جاري التحقق..." : "تحقق من الرمز"}
+          {loading ? t("verifying") : t("verify_code")}
         </motion.button>
 
         {/* إعادة الإرسال */}
         <div className="resend-section">
-          <p>لم تستلم الرمز؟</p>
+          <p>{t("didnt_receive_code")}</p>
           <button 
             className={`resend-button ${canResend ? "active" : "disabled"}`}
             onClick={resendOtp}
             disabled={!canResend || loading}
           >
             {canResend 
-              ? "إعادة إرسال الرمز" 
-              : `إعادة الإرسال بعد ${timer} ثانية`
+              ? t("resend_otp")
+              : `${t("resend_in")} ${timer}s`
             }
           </button>
         </div>
+
+        {/* رابط العودة */}
+        <div className="back-link">
+          <button 
+            onClick={() => navigate("/forgot-password")}
+            className="back-button"
+          >
+            ↩ {t("back_to_forgot_password")}
+          </button>
+        </div>
       </motion.div>
-
-      {/* الـ CSS */}
-      <style jsx>{`
-        .verify-otp-page {
-          min-height: 100vh;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          padding: 20px;
-          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .otp-container {
-          background: white;
-          padding: 40px 30px;
-          border-radius: 20px;
-          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-          text-align: center;
-          max-width: 450px;
-          width: 100%;
-        }
-
-        .otp-header {
-          margin-bottom: 30px;
-        }
-
-        .otp-icon {
-          font-size: 3rem;
-          margin-bottom: 15px;
-        }
-
-        .otp-header h2 {
-          color: #2d3748;
-          margin-bottom: 10px;
-          font-size: 1.8rem;
-        }
-
-        .otp-header p {
-          color: #718096;
-          font-size: 1rem;
-          line-height: 1.5;
-          margin: 5px 0;
-        }
-
-        .email-display {
-          font-weight: bold;
-          color: #667eea !important;
-          background: #f7fafc;
-          padding: 8px 12px;
-          border-radius: 8px;
-          border: 1px solid #e2e8f0;
-        }
-
-        .error-message {
-          background: #fed7d7;
-          color: #c53030;
-          padding: 12px;
-          border-radius: 8px;
-          margin-bottom: 20px;
-          border: 1px solid #feb2b2;
-        }
-
-        .otp-inputs-container {
-          display: flex;
-          justify-content: center;
-          gap: 12px;
-          margin-bottom: 30px;
-        }
-
-        .otp-input {
-          width: 55px;
-          height: 55px;
-          text-align: center;
-          font-size: 1.4rem;
-          font-weight: bold;
-          border: 2px solid #e2e8f0;
-          border-radius: 12px;
-          background: white;
-          transition: all 0.3s ease;
-          outline: none;
-        }
-
-        .otp-input:focus {
-          border-color: #667eea;
-          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-          background: #f7fafc;
-        }
-
-        .otp-input:disabled {
-          background: #f7fafc;
-          cursor: not-allowed;
-        }
-
-        .verify-button {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          color: white;
-          border: none;
-          padding: 15px 30px;
-          border-radius: 12px;
-          font-size: 1.1rem;
-          font-weight: 600;
-          cursor: pointer;
-          width: 100%;
-          margin-bottom: 20px;
-          transition: all 0.3s ease;
-        }
-
-        .verify-button:hover:not(:disabled) {
-          transform: translateY(-2px);
-          box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .verify-button.loading {
-          background: #a0aec0;
-          cursor: not-allowed;
-        }
-
-        .verify-button:disabled {
-          cursor: not-allowed;
-          opacity: 0.7;
-        }
-
-        .resend-section {
-          margin-bottom: 20px;
-        }
-
-        .resend-section p {
-          color: #718096;
-          margin-bottom: 10px;
-        }
-
-        .resend-button {
-          background: transparent;
-          border: 2px solid #667eea;
-          color: #667eea;
-          padding: 8px 20px;
-          border-radius: 8px;
-          cursor: pointer;
-          font-weight: 600;
-          transition: all 0.3s ease;
-        }
-
-        .resend-button.active:hover:not(:disabled) {
-          background: #667eea;
-          color: white;
-        }
-
-        .resend-button.disabled {
-          border-color: #cbd5e0;
-          color: #a0aec0;
-          cursor: not-allowed;
-        }
-
-        .resend-button:disabled {
-          cursor: not-allowed;
-        }
-
-        @media (max-width: 480px) {
-          .otp-container {
-            padding: 30px 20px;
-          }
-
-          .otp-input {
-            width: 45px;
-            height: 45px;
-            font-size: 1.2rem;
-          }
-
-          .otp-inputs-container {
-            gap: 8px;
-          }
-        }
-      `}</style>
     </div>
   );
 };
