@@ -1,12 +1,9 @@
-import { CapacitorConfig } from '@capacitor/cli';
+import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.akram.livraison',
-  appName: 'Livraison Express',
-  webDir: 'www',
-  server: {
-    androidScheme: 'https'
-  }
+  appId: 'com.yourcompany.livraison',
+  appName: 'LivraisonExpress',
+  webDir: 'build'
 };
 
 export default config;

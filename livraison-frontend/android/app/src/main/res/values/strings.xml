@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Livraison Express</string>
-    <string name="title_activity_main">Livraison Express</string>
-    <string name="package_name">com.akram.livraison</string>
-    <string name="custom_url_scheme">com.akram.livraison</string>
+    <string name="app_name">LivraisonExpress</string>
+    <string name="title_activity_main">LivraisonExpress</string>
+    <string name="package_name">com.yourcompany.livraison</string>
+    <string name="custom_url_scheme">com.yourcompany.livraison</string>
 </resources>

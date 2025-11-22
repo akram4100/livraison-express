@@ -1,126 +1,41 @@
-// App.jsx
-import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import VerifyOtp from './pages/VerifyOtp';
-import ResetPassword from './pages/ResetPassword';
-import DashboardAdmin from './pages/DashboardAdmin';
-import DashboardClient from './pages/DashboardClient';
-import DashboardLivreur from './pages/DashboardLivreur';
-import './App.css';
-import './i18n';
+﻿// App.js - النسخة المصححة مع المسارات الصحيحة
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { I18nextProvider } from 'react-i18next';
+import i18n from './i18n';
 
-// 🔹 إنشاء Context لإدارة الوضع الليلي عالمياً
-import { createContext, useContext } from 'react';
-
-const DarkModeContext = createContext();
-
-export const useDarkMode = () => {
-  const context = useContext(DarkModeContext);
-  if (!context) {
-    throw new Error('useDarkMode must be used within a DarkModeProvider');
-  }
-  return context;
-};
-
-const DarkModeProvider = ({ children }) => {
-  const [darkMode, setDarkMode] = useState(false);
-
-  useEffect(() => {
-    const savedDarkMode = localStorage.getItem('darkMode') === 'true';
-    setDarkMode(savedDarkMode);
-    
-    if (savedDarkMode) {
-      document.body.classList.add('dark-mode-global');
-      document.body.style.background = '#1a1a1a';
-    } else {
-      document.body.classList.remove('dark-mode-global');
-      document.body.style.background = '';
-    }
-  }, []);
-
-  const toggleDarkMode = () => {
-    const newDarkMode = !darkMode;
-    setDarkMode(newDarkMode);
-    localStorage.setItem('darkMode', newDarkMode.toString());
-    
-    if (newDarkMode) {
-      document.body.classList.add('dark-mode-global');
-      document.body.style.background = '#1a1a1a';
-    } else {
-      document.body.classList.remove('dark-mode-global');
-      document.body.style.background = '';
-    }
-  };
-
-  const value = {
-    darkMode,
-    toggleDarkMode,
-    setDarkMode
-  };
-
-  return (
-    <DarkModeContext.Provider value={value}>
-      {children}
-    </DarkModeContext.Provider>
-  );
-};
+// استيراد المكونات من مجلد pages
+import Login from './pages/Login.jsx';
+import Register from './pages/Register.jsx';
+// يمكنك إضافة المكونات الأخرى لاحقاً
+import DashboardAdmin from './pages/DashboardAdmin.jsx';
+import DashboardClient from './pages/DashboardClient.jsx';
+import DashboardLivreur from './pages/DashboardLivreur.jsx';
+import VerifyOtp from './pages/VerifyOtp.jsx';
 
 function App() {
-  const isAuthenticated = () => {
-    return localStorage.getItem('user') !== null;
-  };
-
-  const getUserRole = () => {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    return user.role;
-  };
-
   return (
-    <DarkModeProvider>
+    <I18nextProvider i18n={i18n}>
       <Router>
         <div className="App">
           <Routes>
-            {/* 🔹 المسارات العامة - بدون props */}
+            {/* 🔐 مسارات المصادقة */}
+            <Route path="/" element={<Login />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            
+            {/* 🏠 مسارات Dashboard (معلق حالياً) */}
+            {<Route path="/dashboard-admin" element={<DashboardAdmin />} />}
+            {<Route path="/dashboard-client" element={<DashboardClient />} />}
+            {<Route path="/dashboard-livreur" element={<DashboardLivreur />} />}
             <Route path="/verify-otp" element={<VerifyOtp />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            
-            {/* 🔹 المسارات المحمية - بدون props */}
-            <Route 
-              path="/dashboard-admin" 
-              element={
-                isAuthenticated() && getUserRole() === 'admin' ? 
-                <DashboardAdmin /> : 
-                <Navigate to="/login" />
-              } 
-            />
-            <Route 
-              path="/dashboard-client" 
-              element={
-                isAuthenticated() ? 
-                <DashboardClient /> : 
-                <Navigate to="/login" />
-              } 
-            />
-            <Route 
-              path="/dashboard-livreur" 
-              element={
-                isAuthenticated() && getUserRole() === 'livreur' ? 
-                <DashboardLivreur /> : 
-                <Navigate to="/login" />
-              } 
-            />
-            
-            <Route path="/" element={<Navigate to="/login" />} />
+            {/* 🔀 إعادة التوجيه للصفحة الرئيسية */}
+            <Route path="*" element={<Login />} />
           </Routes>
         </div>
       </Router>
-    </DarkModeProvider>
+    </I18nextProvider>
   );
 }
 
 export default App;
-

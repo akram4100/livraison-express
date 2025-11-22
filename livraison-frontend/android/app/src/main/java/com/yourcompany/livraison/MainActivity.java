@@ -1,4 +1,4 @@
-package com.akram.livraison;
+package com.yourcompany.livraison;
 
 import com.getcapacitor.BridgeActivity;
 

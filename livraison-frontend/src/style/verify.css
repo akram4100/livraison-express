@@ -1,356 +1,711 @@
-/* verify.css */
-.otp-container {
+/* VerifyOtp.css - تصميم عصري ومتجاوب */
+
+.verify-otp-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  padding: 2rem;
+  padding: 20px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
   position: relative;
+  overflow: hidden;
 }
 
-.otp-card {
-  background: white;
-  padding: 3rem;
-  border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+.verify-otp-page.dark {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+}
+
+/* 🌐 شريط اللغة والوضع الليلي المحسّن */
+.language-darkmode-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 2rem;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(25px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 1000;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+.language-darkmode-bar.rtl {
+  direction: rtl;
+}
+
+.language-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.section-label {
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.language-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.language-buttons button {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.5rem;
+  border-radius: 12px;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(15px);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.language-buttons button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+}
+
+.language-buttons button.active {
+  background: rgba(255, 255, 255, 0.35);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+.darkmode-section {
+  display: flex;
+  align-items: center;
+}
+
+.darkmode-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.6rem;
+  border-radius: 12px;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(15px);
+  width: 40px;
+  height: 40px;
+}
+
+.darkmode-toggle:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+}
+
+/* الحاوية الرئيسية */
+.otp-container {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  padding: 3rem 2.5rem;
+  border-radius: 24px;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.2);
   text-align: center;
-  max-width: 450px;
+  max-width: 480px;
   width: 100%;
-  border: 1px solid #e0e0e0;
-  backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 2;
 }
 
-.otp-image {
-  width: 120px;
-  height: 120px;
+.verify-otp-page.dark .otp-container {
+  background: rgba(45, 55, 72, 0.95);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+/* رأس الصفحة */
+.otp-header {
+  margin-bottom: 2.5rem;
+}
+
+.otp-icon {
   margin-bottom: 1.5rem;
-  filter: drop-shadow(0 8px 16px rgba(102, 126, 234, 0.3));
 }
 
-.otp-card h2 {
+.icon-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.lock-icon {
+  font-size: 4rem;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.icon-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle, rgba(102, 126, 234, 0.3) 0%, transparent 70%);
+  border-radius: 50%;
+  z-index: -1;
+}
+
+.otp-header h2 {
+  color: #2d3748;
+  margin-bottom: 0.75rem;
   font-size: 2rem;
   font-weight: 700;
-  color: #2d3748;
-  margin-bottom: 1rem;
-  background: linear-gradient(45deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #667eea, #764ba2);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-.otp-text {
-  color: #718096;
-  font-size: 1rem;
-  line-height: 1.6;
-  margin-bottom: 2rem;
+.verify-otp-page.dark .otp-header h2 {
+  background: linear-gradient(135deg, #90cdf4, #63b3ed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.otp-email {
+.otp-header p {
+  color: #718096;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.verify-otp-page.dark .otp-header p {
+  color: #cbd5e0;
+}
+
+.email-display {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #f7fafc, #edf2f7);
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
   font-weight: 600;
-  color: #667eea;
-  display: block;
-  margin-top: 0.5rem;
+  color: #4a5568;
+  font-size: 0.95rem;
+}
+
+.verify-otp-page.dark .email-display {
+  background: linear-gradient(135deg, #4a5568, #2d3748);
+  border-color: #4a5568;
+  color: #e2e8f0;
+}
+
+.email-icon {
   font-size: 1.1rem;
 }
 
-.otp-form {
+/* مؤشر التقدم */
+.progress-indicator {
+  margin-bottom: 2.5rem;
+}
+
+.progress-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.step {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.step-number {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+  background: #e2e8f0;
+  color: #718096;
+  transition: all 0.3s ease;
+}
+
+.step.active .step-number {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.step.completed .step-number {
+  background: #48bb78;
+  color: white;
+}
+
+.step-text {
+  font-size: 0.8rem;
+  color: #a0aec0;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.step.active .step-text {
+  color: #4a5568;
+  font-weight: 600;
+}
+
+.verify-otp-page.dark .step.active .step-text {
+  color: #e2e8f0;
+}
+
+.step-line {
+  width: 40px;
+  height: 2px;
+  background: #e2e8f0;
+  margin: 0 0.5rem;
+}
+
+/* حقول إدخال OTP */
+.otp-inputs-container {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
 }
 
 .otp-input {
-  padding: 1rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  font-size: 1.2rem;
+  width: 60px;
+  height: 70px;
   text-align: center;
-  font-weight: 600;
-  letter-spacing: 0.2em;
+  font-size: 1.8rem;
+  font-weight: 700;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  background: white;
   transition: all 0.3s ease;
-  background: #f8fafc;
+  outline: none;
   color: #2d3748;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.verify-otp-page.dark .otp-input {
+  background: #4a5568;
+  border-color: #718096;
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .otp-input:focus {
-  outline: none;
   border-color: #667eea;
-  background: white;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-  transform: scale(1.02);
+  box-shadow: 
+    0 0 0 3px rgba(102, 126, 234, 0.1),
+    0 4px 12px rgba(102, 126, 234, 0.2);
+  transform: translateY(-2px);
 }
 
-.otp-input::placeholder {
-  color: #a0aec0;
-  letter-spacing: normal;
-  font-weight: normal;
+.verify-otp-page.dark .otp-input:focus {
+  box-shadow: 
+    0 0 0 3px rgba(102, 126, 234, 0.3),
+    0 4px 12px rgba(102, 126, 234, 0.2);
 }
 
-.otp-btn {
-  padding: 1rem;
-  background: linear-gradient(45deg, #667eea, #764ba2);
+.otp-input:disabled {
+  background: #f7fafc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.verify-otp-page.dark .otp-input:disabled {
+  background: #2d3748;
+}
+
+/* رسالة الخطأ */
+.error-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #fed7d7, #feb2b2);
+  color: #c53030;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  border: 1px solid #fc8181;
+  font-weight: 500;
+}
+
+.verify-otp-page.dark .error-message {
+  background: linear-gradient(135deg, #742a2a, #9b2c2c);
+  color: #fc8181;
+  border-color: #c53030;
+}
+
+.error-icon {
+  font-size: 1.2rem;
+}
+
+/* زر التحقق */
+.verify-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
-  border-radius: 12px;
+  padding: 1.2rem 2rem;
+  border-radius: 16px;
   font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
+  width: 100%;
+  margin-bottom: 1.5rem;
   transition: all 0.3s ease;
-  margin-top: 0.5rem;
+  position: relative;
+  overflow: hidden;
 }
 
-.otp-btn:hover:not(:disabled) {
+.verify-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.verify-button:hover::before {
+  left: 100%;
+}
+
+.verify-button:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
 }
 
-.otp-btn:disabled {
-  opacity: 0.6;
+.verify-button.loading {
+  background: #a0aec0;
   cursor: not-allowed;
-  transform: none;
 }
 
-/* 🌙 الوضع الليلي */
-.dark .otp-container {
-  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
+.verify-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
-.dark .otp-card {
-  background: #2d2d2d !important;
-  border: 1px solid #404040 !important;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4) !important;
+.button-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
 }
 
-.dark .otp-card h2 {
-  color: #ffffff !important;
-  background: linear-gradient(45deg, #8ab4f8, #ba68c8);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.button-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
 }
 
-.dark .otp-text {
-  color: #b0b0b0 !important;
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid transparent;
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 
-.dark .otp-email {
-  color: #8ab4f8 !important;
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-.dark .otp-input {
-  background: #3a3a3a !important;
-  border: 2px solid #555 !important;
-  color: #ffffff !important;
+.button-icon {
+  font-size: 1.2rem;
 }
 
-.dark .otp-input:focus {
-  border-color: #8ab4f8 !important;
-  background: #444 !important;
-  box-shadow: 0 0 0 3px rgba(138, 180, 248, 0.2) !important;
+/* قسم إعادة الإرسال */
+.resend-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.5rem;
+  background: #f7fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
 }
 
-.dark .otp-input::placeholder {
-  color: #888 !important;
+.verify-otp-page.dark .resend-section {
+  background: #4a5568;
+  border-color: #718096;
 }
 
-.dark .otp-btn {
-  background: linear-gradient(45deg, #8ab4f8, #ba68c8) !important;
-  color: white !important;
-  box-shadow: 0 4px 15px rgba(138, 180, 248, 0.3) !important;
+.timer-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
-.dark .otp-btn:hover:not(:disabled) {
-  box-shadow: 0 8px 25px rgba(138, 180, 248, 0.4) !important;
+.timer-icon {
+  font-size: 1.2rem;
+  opacity: 0.8;
 }
 
-/* 📱 تصميم متجاوب */
+.timer-text {
+  font-size: 0.9rem;
+  color: #718096;
+}
+
+.verify-otp-page.dark .timer-text {
+  color: #cbd5e0;
+}
+
+.ready-text {
+  color: #48bb78;
+  font-weight: 600;
+}
+
+.countdown-text {
+  color: #718096;
+}
+
+.timer-number {
+  color: #667eea;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.resend-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: 2px solid #667eea;
+  color: #667eea;
+  padding: 0.6rem 1.2rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.verify-otp-page.dark .resend-button {
+  color: #90cdf4;
+  border-color: #90cdf4;
+}
+
+.resend-button.active:hover:not(:disabled) {
+  background: #667eea;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.verify-otp-page.dark .resend-button.active:hover:not(:disabled) {
+  background: #90cdf4;
+  color: #2d3748;
+}
+
+.resend-button.disabled {
+  border-color: #cbd5e0;
+  color: #a0aec0;
+  cursor: not-allowed;
+}
+
+.verify-otp-page.dark .resend-button.disabled {
+  border-color: #718096;
+  color: #a0aec0;
+}
+
+.resend-button:disabled {
+  cursor: not-allowed;
+}
+
+.resend-icon {
+  font-size: 1rem;
+}
+
+/* رابط العودة */
+.back-link {
+  text-align: center;
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: none;
+  color: #667eea;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+}
+
+.verify-otp-page.dark .back-button {
+  color: #90cdf4;
+}
+
+.back-button:hover {
+  background: rgba(102, 126, 234, 0.1);
+  color: #5a67d8;
+}
+
+.verify-otp-page.dark .back-button:hover {
+  background: rgba(144, 205, 244, 0.1);
+}
+
+.back-icon {
+  font-size: 1rem;
+}
+
+/* العناصر الزخرفية */
+.decorative-elements {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.floating-element {
+  position: absolute;
+  font-size: 2rem;
+  opacity: 0.1;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.el-1 {
+  top: 20%;
+  left: 10%;
+}
+
+.el-2 {
+  top: 60%;
+  right: 15%;
+}
+
+.el-3 {
+  bottom: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* وسائط الاستعلام للهواتف */
 @media (max-width: 768px) {
+  .language-darkmode-bar {
+    padding: 0.8rem 1rem;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .language-section {
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+  
+  .language-buttons {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .section-label {
+    text-align: center;
+  }
+  
   .otp-container {
-    padding: 1rem;
-  }
-  
-  .otp-card {
     padding: 2rem 1.5rem;
-  }
-  
-  .otp-image {
-    width: 100px;
-    height: 100px;
-  }
-  
-  .otp-card h2 {
-    font-size: 1.7rem;
+    margin: 1rem;
   }
   
   .otp-input {
-    font-size: 1.1rem;
-    padding: 0.8rem;
+    width: 50px;
+    height: 60px;
+    font-size: 1.6rem;
+  }
+  
+  .otp-inputs-container {
+    gap: 0.75rem;
+  }
+  
+  .progress-steps {
+    gap: 0.25rem;
+  }
+  
+  .step-text {
+    font-size: 0.7rem;
+  }
+  
+  .step-line {
+    width: 20px;
+  }
+  
+  .resend-section {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
   }
 }
 
-/* 🔄 حركات متحركة */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
+@media (max-width: 480px) {
+  .otp-input {
+    width: 45px;
+    height: 55px;
+    font-size: 1.4rem;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  
+  .otp-inputs-container {
+    gap: 0.5rem;
+  }
+  
+  .progress-steps {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .step-line {
+    display: none;
   }
 }
 
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
+/* تحسينات الأداء */
+@media (prefers-reduced-motion: reduce) {
+  .floating-element,
+  .verify-button::before,
+  .otp-input {
+    animation: none;
+    transition: none;
   }
-  50% {
-    transform: scale(1.05);
+  
+  .verify-button:hover:not(:disabled),
+  .resend-button.active:hover:not(:disabled),
+  .back-button:hover {
+    transform: none;
   }
-}
-
-.otp-card {
-  animation: fadeInUp 0.6s ease-out;
-}
-
-.otp-input:focus {
-  animation: pulse 0.3s ease;
-}
-
-/* تأثيرات إضافية للبطاقة */
-.otp-card::before {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: linear-gradient(45deg, #667eea, #764ba2, #667eea);
-  border-radius: 22px;
-  z-index: -1;
-  opacity: 0.1;
-}
-
-.dark .otp-card::before {
-  background: linear-gradient(45deg, #8ab4f8, #ba68c8, #8ab4f8);
-  opacity: 0.2;
-}
-
-/* تصميم خاص لحقل OTP */
-.otp-input-group {
-  position: relative;
-  display: flex;
-  justify-content: center;
-}
-
-.otp-input {
-  width: 100%;
-  max-width: 250px;
-  margin: 0 auto;
-  font-family: 'Courier New', monospace;
-}
-
-/* رسائل التنبيه */
-.message {
-  padding: 1rem;
-  border-radius: 10px;
-  margin: 1rem 0;
-  font-weight: 600;
-  text-align: center;
-}
-
-.message.success {
-  background: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
-
-.message.error {
-  background: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-}
-
-.dark .message.success {
-  background: rgba(34, 197, 94, 0.2);
-  color: #86efac;
-  border: 1px solid rgba(34, 197, 94, 0.3);
-}
-
-.dark .message.error {
-  background: rgba(239, 68, 68, 0.2);
-  color: #fca5a5;
-  border: 1px solid rgba(239, 68, 68, 0.3);
-}
-
-/* أزرار اللغة والوضع الليلي */
-.language-switch {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  display: flex;
-  gap: 10px;
-  z-index: 1000;
-}
-
-.language-switch button {
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.language-switch button:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: scale(1.1);
-}
-
-.dark .language-switch button {
-  background: rgba(255, 255, 255, 0.15) !important;
-  color: #ffffff !important;
-}
-
-.dark .language-switch button:hover {
-  background: rgba(255, 255, 255, 0.25) !important;
-}
-
-/* تأثيرات متقدمة */
-.otp-input:valid {
-  border-color: #48bb78;
-  background: #f0fff4;
-}
-
-.dark .otp-input:valid {
-  border-color: #68d391;
-  background: rgba(72, 187, 120, 0.1);
-}
-
-/* مؤشر الكتابة المتحرك */
-.otp-input {
-  caret-color: #667eea;
-}
-
-.dark .otp-input {
-  caret-color: #8ab4f8;
-}
-
-/* تأثير عند اكتمال الرمز */
-.otp-input:not(:placeholder-shown) {
-  background: #f0fff4;
-  border-color: #48bb78;
-}
-
-.dark .otp-input:not(:placeholder-shown) {
-  background: rgba(72, 187, 120, 0.1);
-  border-color: #68d391;
 }

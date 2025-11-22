@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import "../style/reset.css";
 
 const ResetPassword = ({ globalDarkMode, updateGlobalDarkMode }) => {
   const { t, i18n } = useTranslation();
@@ -18,6 +19,8 @@ const ResetPassword = ({ globalDarkMode, updateGlobalDarkMode }) => {
   const [email, setEmail] = useState("");
   const [passwordStrength, setPasswordStrength] = useState("");
   const [darkMode, setDarkMode] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // 🔹 مزامنة الوضع الليلي مع الإعدادات العالمية
   useEffect(() => {
@@ -54,7 +57,6 @@ const ResetPassword = ({ globalDarkMode, updateGlobalDarkMode }) => {
     if (location.state?.email && location.state?.verified) {
       setEmail(location.state.email);
     } else {
-      // إذا لم يتم التحقق من OTP، ارجع لصفحة التحقق
       navigate("/verify-otp");
     }
   }, [location, navigate]);
@@ -72,13 +74,13 @@ const ResetPassword = ({ globalDarkMode, updateGlobalDarkMode }) => {
 
       const strength = [hasLower, hasUpper, hasNumber, hasSpecial, isLong].filter(Boolean).length;
 
-      if (strength <= 2) return t("weak");
-      if (strength <= 4) return t("medium");
-      return t("strong");
+      if (strength <= 2) return "weak";
+      if (strength <= 4) return "medium";
+      return "strong";
     };
 
     setPasswordStrength(checkPasswordStrength(formData.password));
-  }, [formData.password, t]);
+  }, [formData.password]);
 
   // ✏️ معالجة تغيير الحقول
   const handleChange = (e) => {
@@ -97,17 +99,17 @@ const ResetPassword = ({ globalDarkMode, updateGlobalDarkMode }) => {
     
     // التحقق من صحة البيانات
     if (!formData.password || !formData.confirmPassword) {
-      setError(t("fill_all_fields"));
+      setError(t("fill_all_fields") || "Please fill in all fields");
       return;
     }
 
     if (formData.password.length < 6) {
-      setError(t("password_min_length"));
+      setError(t("password_min_length") || "Password must be at least 6 characters");
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setError(t("passwords_not_match"));
+      setError(t("passwords_not_match") || "Passwords do not match");
       return;
     }
 
@@ -115,7 +117,7 @@ const ResetPassword = ({ globalDarkMode, updateGlobalDarkMode }) => {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:8080/api/reset-password", {
+      const response = await fetch("https://livraison-api-x45n.onrender.com/api/reset-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -129,37 +131,74 @@ const ResetPassword = ({ globalDarkMode, updateGlobalDarkMode }) => {
       const data = await response.json();
 
       if (response.ok) {
-        setSuccess(t("password_reset_success"));
+        setSuccess(t("password_reset_success") || "Password reset successfully!");
         
         // الانتقال لتسجيل الدخول بعد 2 ثانية
         setTimeout(() => {
           navigate("/login");
         }, 2000);
       } else {
-        setError(data.message || t("password_reset_failed"));
+        setError(data.message || t("password_reset_failed") || "Password reset failed");
       }
     } catch (error) {
       console.error("❌ خطأ في إعادة تعيين كلمة المرور:", error);
-      setError(t("connection_error"));
+      setError(t("connection_error") || "Connection error");
     } finally {
       setLoading(false);
     }
   };
 
-  // 👁️ تبديل عرض كلمة المرور
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  // 🎯 الحصول على تلميحات كلمة المرور
+  const getPasswordTips = () => {
+    const tips = [
+      { key: "min_6_chars", condition: formData.password.length >= 6 },
+      { key: "lowercase_letter", condition: /[a-z]/.test(formData.password) },
+      { key: "uppercase_letter", condition: /[A-Z]/.test(formData.password) },
+      { key: "number_required", condition: /[0-9]/.test(formData.password) },
+      { key: "special_char", condition: /[!@#$%^&*(),.?":{}|<>]/.test(formData.password) }
+    ];
+
+    return tips;
+  };
 
   return (
     <div className={`reset-password-page ${darkMode ? "dark" : ""}`}>
-      {/* 🌐 أزرار اللغة والوضع */}
-      <div className={`language-switch ${i18n.language === "ar" ? "rtl" : "ltr"}`}>
-        <button onClick={() => changeLanguage("fr")}>🇫🇷</button>
-        <button onClick={() => changeLanguage("en")}>🇬🇧</button>
-        <button onClick={() => changeLanguage("ar")}>🇸🇦</button>
-        <button onClick={toggleDarkMode}>
-          {darkMode ? "☀️" : "🌙"}
-        </button>
+      {/* 🌐 شريط اللغة والوضع الليلي المحسّن */}
+      <div className={`language-darkmode-bar ${i18n.language === "ar" ? "rtl" : "ltr"}`}>
+        <div className="language-section">
+          <span className="section-label">{t("language")}:</span>
+          <div className="language-buttons">
+            <button 
+              className={i18n.language === "fr" ? "active" : ""}
+              onClick={() => changeLanguage("fr")}
+            >
+              🇫🇷
+            </button>
+            <button 
+              className={i18n.language === "en" ? "active" : ""}
+              onClick={() => changeLanguage("en")}
+            >
+              🇬🇧
+            </button>
+            <button 
+              className={i18n.language === "ar" ? "active" : ""}
+              onClick={() => changeLanguage("ar")}
+            >
+              🇸🇦
+            </button>
+          </div>
+        </div>
+        
+        <div className="darkmode-section">
+          <button 
+            className={`darkmode-toggle ${darkMode ? "dark" : "light"}`}
+            onClick={toggleDarkMode}
+          >
+            <span className="toggle-icon">
+              {darkMode ? "☀️" : "🌙"}
+            </span>
+          </button>
+        </div>
       </div>
 
       <motion.div 
@@ -176,11 +215,37 @@ const ResetPassword = ({ globalDarkMode, updateGlobalDarkMode }) => {
             transition={{ delay: 0.2, type: "spring" }}
             className="reset-icon"
           >
-            🔑
+            <div className="icon-wrapper">
+              <span className="key-icon">🔑</span>
+              <div className="icon-glow"></div>
+            </div>
           </motion.div>
-          <h2>{t("set_new_password")}</h2>
-          <p>{t("choose_strong_password")}</p>
-          <p className="email-display">{email}</p>
+          <h2>{t("set_new_password") || "Set New Password"}</h2>
+          <p>{t("choose_strong_password") || "Choose a strong and secure password for your account"}</p>
+          <div className="email-display">
+            <span className="email-icon">📧</span>
+            {email}
+          </div>
+        </div>
+
+        {/* مؤشر التقدم */}
+        <div className="progress-indicator">
+          <div className="progress-steps">
+            <div className="step completed">
+              <div className="step-number">1</div>
+              <span className="step-text">{t("request_code") || "Request Code"}</span>
+            </div>
+            <div className="step-line"></div>
+            <div className="step completed">
+              <div className="step-number">2</div>
+              <span className="step-text">{t("verify_code") || "Verify Code"}</span>
+            </div>
+            <div className="step-line"></div>
+            <div className="step active">
+              <div className="step-number">3</div>
+              <span className="step-text">{t("reset_password") || "Reset Password"}</span>
+            </div>
+          </div>
         </div>
 
         {/* رسالة الخطأ */}
@@ -190,7 +255,8 @@ const ResetPassword = ({ globalDarkMode, updateGlobalDarkMode }) => {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
           >
-            ❌ {error}
+            <span className="error-icon">⚠️</span>
+            {error}
           </motion.div>
         )}
 
@@ -201,15 +267,24 @@ const ResetPassword = ({ globalDarkMode, updateGlobalDarkMode }) => {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
           >
-            ✅ {success}
+            <span className="success-icon">✅</span>
+            {success}
           </motion.div>
         )}
 
         {/* نموذج إعادة التعيين */}
         <form onSubmit={handleResetPassword} className="reset-form">
           {/* حقل كلمة المرور */}
-          <div className="form-group">
-            <label htmlFor="password">{t("new_password")}</label>
+          <motion.div
+            className="form-group"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <label htmlFor="password" className="form-label">
+              <span className="label-icon">🔒</span>
+              {t("new_password") || "New Password"}
+            </label>
             <div className="password-input-container">
               <input
                 type={showPassword ? "text" : "password"}
@@ -218,40 +293,54 @@ const ResetPassword = ({ globalDarkMode, updateGlobalDarkMode }) => {
                 value={formData.password}
                 onChange={handleChange}
                 className="password-input"
-                placeholder={t("enter_new_password")}
+                placeholder={t("enter_new_password") || "Enter your new password"}
                 disabled={loading}
                 minLength="6"
               />
-              <button
+              <motion.button
                 type="button"
                 className="password-toggle"
                 onClick={() => setShowPassword(!showPassword)}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
               >
                 {showPassword ? "🙈" : "👁️"}
-              </button>
+              </motion.button>
             </div>
             
             {/* مؤشر قوة كلمة المرور */}
             {formData.password && (
               <motion.div 
                 className="password-strength"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
               >
-                <span>{t("password_strength")}: </span>
-                <span className={`strength-${passwordStrength}`}>
-                  {passwordStrength}
-                </span>
+                <div className="strength-header">
+                  <span className="strength-label">{t("password_strength") || "Password Strength"}:</span>
+                  <span className={`strength-value ${passwordStrength}`}>
+                    {passwordStrength === "weak" && t("weak") || "Weak"}
+                    {passwordStrength === "medium" && t("medium") || "Medium"}
+                    {passwordStrength === "strong" && t("strong") || "Strong"}
+                  </span>
+                </div>
                 <div className="strength-bar">
                   <div className={`strength-fill ${passwordStrength}`}></div>
                 </div>
               </motion.div>
             )}
-          </div>
+          </motion.div>
 
           {/* حقل تأكيد كلمة المرور */}
-          <div className="form-group">
-            <label htmlFor="confirmPassword">{t("confirm_password")}</label>
+          <motion.div
+            className="form-group"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <label htmlFor="confirmPassword" className="form-label">
+              <span className="label-icon">✅</span>
+              {t("confirm_password") || "Confirm Password"}
+            </label>
             <div className="password-input-container">
               <input
                 type={showConfirmPassword ? "text" : "password"}
@@ -260,16 +349,18 @@ const ResetPassword = ({ globalDarkMode, updateGlobalDarkMode }) => {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 className="password-input"
-                placeholder={t("re_enter_password")}
+                placeholder={t("re_enter_password") || "Re-enter your password"}
                 disabled={loading}
               />
-              <button
+              <motion.button
                 type="button"
                 className="password-toggle"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
               >
                 {showConfirmPassword ? "🙈" : "👁️"}
-              </button>
+              </motion.button>
             </div>
             
             {/* مؤشر التطابق */}
@@ -280,415 +371,142 @@ const ResetPassword = ({ globalDarkMode, updateGlobalDarkMode }) => {
                 animate={{ opacity: 1 }}
               >
                 {formData.password === formData.confirmPassword ? (
-                  <span className="match-success">✅ {t("passwords_match")}</span>
+                  <span className="match-success">
+                    <span className="match-icon">✅</span>
+                    {t("passwords_match") || "Passwords match"}
+                  </span>
                 ) : (
-                  <span className="match-error">❌ {t("passwords_not_match")}</span>
+                  <span className="match-error">
+                    <span className="match-icon">❌</span>
+                    {t("passwords_not_match") || "Passwords do not match"}
+                  </span>
                 )}
               </motion.div>
             )}
-          </div>
+          </motion.div>
 
           {/* تلميحات كلمة المرور */}
-          <div className="password-tips">
-            <h4>{t("password_tips")}:</h4>
-            <ul>
-              <li className={formData.password.length >= 6 ? "valid" : ""}>{t("min_6_chars")}</li>
-              <li className={/[a-z]/.test(formData.password) ? "valid" : ""}>{t("lowercase_letter")}</li>
-              <li className={/[A-Z]/.test(formData.password) ? "valid" : ""}>{t("uppercase_letter")}</li>
-              <li className={/[0-9]/.test(formData.password) ? "valid" : ""}>{t("number_required")}</li>
-              <li className={/[!@#$%^&*(),.?":{}|<>]/.test(formData.password) ? "valid" : ""}>{t("special_char")}</li>
-            </ul>
-          </div>
+          <motion.div
+            className="password-tips"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <h4 className="tips-title">
+              <span className="tips-icon">💡</span>
+              {t("password_tips") || "Password Requirements"}:
+            </h4>
+            <div className="tips-list">
+              {getPasswordTips().map((tip, index) => (
+                <motion.div
+                  key={tip.key}
+                  className={`tip-item ${tip.condition ? "valid" : ""}`}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.6 + index * 0.1 }}
+                >
+                  <span className="tip-icon">
+                    {tip.condition ? "✅" : "⚪"}
+                  </span>
+                  <span className="tip-text">
+                    {t(tip.key) || tip.key}
+                  </span>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
 
           {/* زر الإرسال */}
           <motion.button
             type="submit"
             className={`reset-button ${loading ? "loading" : ""}`}
-            whileHover={{ scale: loading ? 1 : 1.05 }}
-            whileTap={{ scale: loading ? 1 : 0.95 }}
+            whileHover={{ scale: loading ? 1 : 1.02 }}
+            whileTap={{ scale: loading ? 1 : 0.98 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
             disabled={loading}
           >
-            {loading ? t("setting_password") : t("set_password")}
+            {loading ? (
+              <div className="button-loading">
+                <div className="loading-spinner"></div>
+                {t("setting_password") || "Setting Password..."}
+              </div>
+            ) : (
+              <div className="button-content">
+                <span className="button-icon">🔐</span>
+                {t("set_password") || "Set Password"}
+              </div>
+            )}
           </motion.button>
         </form>
 
         {/* رابط العودة */}
-        <div className="back-link">
-          <button 
+        <motion.div 
+          className="back-link"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.9 }}
+        >
+          <motion.button 
             onClick={() => navigate("/login")}
             className="back-button"
+            whileHover={{ x: -5 }}
+            whileTap={{ scale: 0.95 }}
           >
-            ↩ {t("back_to_login")}
-          </button>
-        </div>
+            <span className="back-icon">↩</span>
+            {t("back_to_login") || "Back to Login"}
+          </motion.button>
+        </motion.div>
       </motion.div>
 
-      {/* الـ CSS */}
-      <style jsx>{`
-        .reset-password-page {
-          min-height: 100vh;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          padding: 20px;
-          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          position: relative;
-        }
-
-        .reset-password-page.dark {
-          background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
-        }
-
-        .language-switch {
-          position: absolute;
-          top: 20px;
-          right: 20px;
-          display: flex;
-          gap: 10px;
-          z-index: 1000;
-        }
-
-        .language-switch.rtl {
-          right: auto;
-          left: 20px;
-        }
-
-        .language-switch button {
-          background: rgba(255, 255, 255, 0.2);
-          border: none;
-          padding: 8px 12px;
-          border-radius: 8px;
-          cursor: pointer;
-          color: white;
-          font-size: 1rem;
-          backdrop-filter: blur(10px);
-          transition: all 0.3s ease;
-        }
-
-        .language-switch button:hover {
-          background: rgba(255, 255, 255, 0.3);
-          transform: scale(1.1);
-        }
-
-        .reset-container {
-          background: white;
-          padding: 40px 30px;
-          border-radius: 20px;
-          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-          max-width: 500px;
-          width: 100%;
-        }
-
-        .reset-password-page.dark .reset-container {
-          background: #2d3748;
-          color: white;
-        }
-
-        .reset-header {
-          text-align: center;
-          margin-bottom: 30px;
-        }
-
-        .reset-icon {
-          font-size: 3rem;
-          margin-bottom: 15px;
-        }
-
-        .reset-header h2 {
-          color: #2d3748;
-          margin-bottom: 10px;
-          font-size: 1.8rem;
-        }
-
-        .reset-password-page.dark .reset-header h2 {
-          color: white;
-        }
-
-        .reset-header p {
-          color: #718096;
-          font-size: 1rem;
-          line-height: 1.5;
-          margin: 5px 0;
-        }
-
-        .reset-password-page.dark .reset-header p {
-          color: #cbd5e0;
-        }
-
-        .email-display {
-          font-weight: bold;
-          color: #667eea !important;
-          background: #f7fafc;
-          padding: 8px 12px;
-          border-radius: 8px;
-          border: 1px solid #e2e8f0;
-        }
-
-        .reset-password-page.dark .email-display {
-          background: #4a5568;
-          border-color: #718096;
-        }
-
-        .error-message {
-          background: #fed7d7;
-          color: #c53030;
-          padding: 12px;
-          border-radius: 8px;
-          margin-bottom: 20px;
-          border: 1px solid #feb2b2;
-        }
-
-        .reset-password-page.dark .error-message {
-          background: #742a2a;
-          color: #fc8181;
-          border-color: #c53030;
-        }
-
-        .success-message {
-          background: #c6f6d5;
-          color: #276749;
-          padding: 12px;
-          border-radius: 8px;
-          margin-bottom: 20px;
-          border: 1px solid #9ae6b4;
-        }
-
-        .reset-password-page.dark .success-message {
-          background: #22543d;
-          color: #68d391;
-          border-color: #38a169;
-        }
-
-        .reset-form {
-          margin-bottom: 20px;
-        }
-
-        .form-group {
-          margin-bottom: 20px;
-        }
-
-        .form-group label {
-          display: block;
-          margin-bottom: 8px;
-          font-weight: 600;
-          color: #2d3748;
-        }
-
-        .reset-password-page.dark .form-group label {
-          color: white;
-        }
-
-        .password-input-container {
-          position: relative;
-          display: flex;
-          align-items: center;
-        }
-
-        .password-input {
-          width: 100%;
-          padding: 12px 45px 12px 12px;
-          border: 2px solid #e2e8f0;
-          border-radius: 8px;
-          font-size: 1rem;
-          transition: all 0.3s ease;
-          outline: none;
-          background: white;
-          color: #2d3748;
-        }
-
-        .reset-password-page.dark .password-input {
-          background: #4a5568;
-          border-color: #718096;
-          color: white;
-        }
-
-        .password-input:focus {
-          border-color: #667eea;
-          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .reset-password-page.dark .password-input:focus {
-          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
-        }
-
-        .password-input:disabled {
-          background: #f7fafc;
-          cursor: not-allowed;
-        }
-
-        .reset-password-page.dark .password-input:disabled {
-          background: #2d3748;
-        }
-
-        .password-toggle {
-          position: absolute;
-          right: 10px;
-          background: none;
-          border: none;
-          font-size: 1.2rem;
-          cursor: pointer;
-          padding: 5px;
-        }
-
-        .password-strength {
-          margin-top: 8px;
-          font-size: 0.9rem;
-        }
-
-        .strength-${t("weak")} { color: #e53e3e; }
-        .strength-${t("medium")} { color: #d69e2e; }
-        .strength-${t("strong")} { color: #38a169; }
-
-        .strength-bar {
-          width: 100%;
-          height: 4px;
-          background: #e2e8f0;
-          border-radius: 2px;
-          margin-top: 4px;
-          overflow: hidden;
-        }
-
-        .reset-password-page.dark .strength-bar {
-          background: #4a5568;
-        }
-
-        .strength-fill {
-          height: 100%;
-          transition: all 0.3s ease;
-        }
-
-        .strength-fill.${t("weak")} {
-          width: 33%;
-          background: #e53e3e;
-        }
-
-        .strength-fill.${t("medium")} {
-          width: 66%;
-          background: #d69e2e;
-        }
-
-        .strength-fill.${t("strong")} {
-          width: 100%;
-          background: #38a169;
-        }
-
-        .password-match {
-          margin-top: 8px;
-          font-size: 0.9rem;
-        }
-
-        .match-success { color: #38a169; }
-        .match-error { color: #e53e3e; }
-
-        .password-tips {
-          background: #f7fafc;
-          padding: 15px;
-          border-radius: 8px;
-          margin-bottom: 20px;
-          border: 1px solid #e2e8f0;
-        }
-
-        .reset-password-page.dark .password-tips {
-          background: #4a5568;
-          border-color: #718096;
-        }
-
-        .password-tips h4 {
-          margin: 0 0 10px 0;
-          color: #2d3748;
-          font-size: 0.9rem;
-        }
-
-        .reset-password-page.dark .password-tips h4 {
-          color: white;
-        }
-
-        .password-tips ul {
-          margin: 0;
-          padding-left: 20px;
-          color: #718096;
-          font-size: 0.8rem;
-        }
-
-        .reset-password-page.dark .password-tips ul {
-          color: #cbd5e0;
-        }
-
-        .password-tips li {
-          margin-bottom: 5px;
-        }
-
-        .password-tips li.valid {
-          color: #38a169;
-          text-decoration: line-through;
-        }
-
-        .reset-button {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          color: white;
-          border: none;
-          padding: 15px 30px;
-          border-radius: 8px;
-          font-size: 1.1rem;
-          font-weight: 600;
-          cursor: pointer;
-          width: 100%;
-          transition: all 0.3s ease;
-        }
-
-        .reset-button:hover:not(:disabled) {
-          transform: translateY(-2px);
-          box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .reset-button.loading {
-          background: #a0aec0;
-          cursor: not-allowed;
-        }
-
-        .reset-button:disabled {
-          cursor: not-allowed;
-          opacity: 0.7;
-        }
-
-        .back-link {
-          text-align: center;
-        }
-
-        .back-button {
-          background: transparent;
-          border: none;
-          color: #667eea;
-          cursor: pointer;
-          font-size: 0.9rem;
-          text-decoration: underline;
-        }
-
-        .reset-password-page.dark .back-button {
-          color: #90cdf4;
-        }
-
-        .back-button:hover {
-          color: #5a67d8;
-        }
-
-        @media (max-width: 480px) {
-          .reset-container {
-            padding: 30px 20px;
-          }
-          
-          .language-switch {
-            top: 10px;
-            right: 10px;
-          }
-          
-          .language-switch.rtl {
-            right: auto;
-            left: 10px;
-          }
-        }
-      `}</style>
+      {/* العناصر الزخرفية */}
+      <div className="decorative-elements">
+        <motion.div 
+          className="floating-element el-1"
+          animate={{ 
+            y: [0, -25, 0],
+            rotate: [0, 10, 0]
+          }}
+          transition={{ 
+            duration: 5,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        >
+          🔒
+        </motion.div>
+        <motion.div 
+          className="floating-element el-2"
+          animate={{ 
+            y: [0, -20, 0],
+            rotate: [0, -8, 0]
+          }}
+          transition={{ 
+            duration: 4,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1
+          }}
+        >
+          🔑
+        </motion.div>
+        <motion.div 
+          className="floating-element el-3"
+          animate={{ 
+            y: [0, -30, 0],
+            scale: [1, 1.2, 1]
+          }}
+          transition={{ 
+            duration: 6,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 2
+          }}
+        >
+          ⚡
+        </motion.div>
+      </div>
     </div>
   );
 };
