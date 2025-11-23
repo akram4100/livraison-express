@@ -180,7 +180,7 @@ const generateQRCode = async () => {
   setQrStatus("waiting");
   
   try {
-    const response = await fetch("https://livraison-api-x45n.onrender.com/api/generate-qr-session", {
+    const response = await fetch("https://livraison-api-x45n.onrender.com/api/generate-qr", {
       method: "POST",
       headers: { "Content-Type": "application/json" }
     });
