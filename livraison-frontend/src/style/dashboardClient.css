@@ -1,14 +1,15 @@
-/* dashboardAdmin.css - النسخة المحسنة */
-.admin-dashboard {
+/* dashboardClient.css - النسخة المحسنة مع الشريط الجانبي */
+
+.dashboard-client {
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Segoe UI', system-ui, sans-serif;
   transition: all 0.3s ease;
   position: relative;
   overflow-x: hidden;
 }
 
-.admin-dashboard::before {
+.dashboard-client::before {
   content: '';
   position: fixed;
   top: 0;
@@ -20,28 +21,28 @@
   z-index: 0;
 }
 
-.admin-dashboard.dark {
+.dashboard-client.dark {
   background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
 }
 
-.admin-dashboard.dark::before {
+.dashboard-client.dark::before {
   background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="%23000000" fill-opacity="0.05" points="0,1000 1000,0 1000,1000"/></svg>');
 }
 
 /* دعم RTL للغة العربية */
-.admin-dashboard.rtl {
+.dashboard-client.rtl {
   direction: rtl;
   text-align: right;
 }
 
-.admin-dashboard.rtl .admin-header,
-.admin-dashboard.rtl .sidebar-user,
-.admin-dashboard.rtl .sidebar-nav,
-.admin-dashboard.rtl .admin-main-content {
+.dashboard-client.rtl .dashboard-nav,
+.dashboard-client.rtl .welcome-content,
+.dashboard-client.rtl .section-header,
+.dashboard-client.rtl .profile-info {
   text-align: right;
 }
 
-/* 🌐 شريط اللغة والوضع الليلي في الأعلى */
+/* 🌐 شريط اللغة والوضع الليلي */
 .language-darkmode-bar {
   position: fixed;
   top: 0;
@@ -110,15 +111,14 @@
   align-items: center;
 }
 
-/* 🔘 زر تبديل الوضع الليلي المحسن */
-.darkmode-toggle-btn {
+.darkmode-toggle {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
   background: rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 0.6rem 1.2rem;
-  border-radius: 25px;
+  padding: 0.6rem 1rem;
+  border-radius: 20px;
   color: white;
   font-size: 0.85rem;
   cursor: pointer;
@@ -127,94 +127,58 @@
   font-weight: 500;
 }
 
-.darkmode-toggle-btn:hover {
+.darkmode-toggle:hover {
   background: rgba(255, 255, 255, 0.3);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
 }
 
-.toggle-switch {
-  position: relative;
-  width: 50px;
-  height: 24px;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 12px;
-  transition: all 0.3s ease;
-}
-
-.darkmode-toggle-btn.dark .toggle-switch {
-  background: rgba(103, 126, 234, 0.8);
-}
-
-.toggle-knob {
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 20px;
-  height: 20px;
-  background: white;
-  border-radius: 50%;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.darkmode-toggle-btn.dark .toggle-knob {
-  left: 28px;
-  background: #ffeb3b;
+.toggle-icon {
+  font-size: 1rem;
 }
 
 .toggle-text {
   font-weight: 600;
-  white-space: nowrap;
 }
 
-/* 🌐 شريط الرأس */
-.admin-header {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(25px);
-  padding: 1rem 2rem;
+/* 🎯 التنقل العلوي */
+.dashboard-nav {
+  position: fixed;
+  top: 60px; /* تأخذ في الاعتبار شريط اللغة */
+  left: 0;
+  right: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  position: fixed;
-  top: 60px; /* ارتفاع شريط اللغة */
-  left: 0;
-  right: 0;
+  padding: 1rem 2rem;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(25px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
   z-index: 1000;
-  height: 70px;
-  box-sizing: border-box;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-.header-left {
+.nav-left {
   display: flex;
   align-items: center;
   gap: 1rem;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.user-welcome {
-  color: white;
-  font-weight: 600;
-  font-size: 1rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  flex: 1;
 }
 
 .sidebar-toggle {
   background: rgba(255, 255, 255, 0.2);
   border: none;
+  color: white;
   font-size: 1.2rem;
   cursor: pointer;
   padding: 0.5rem;
   border-radius: 8px;
   transition: all 0.3s ease;
-  color: white;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .sidebar-toggle:hover {
@@ -222,40 +186,144 @@
   transform: scale(1.1);
 }
 
-.admin-header h1 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: white;
-  margin: 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-/* 📱 الشريط الجانبي - تصميم محسن */
-.admin-sidebar {
-  width: 280px;
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(25px);
-  border-right: 1px solid rgba(255, 255, 255, 0.2);
-  transition: all 0.3s ease;
-  overflow: hidden;
+.nav-brand {
   display: flex;
-  flex-direction: column;
-  z-index: 900;
-  position: fixed;
-  top: 130px; /* ارتفاع شريط اللغة + الهيدر */
-  left: 0;
-  height: calc(100vh - 130px);
+  align-items: center;
+  gap: 0.75rem;
+  color: white;
+  font-weight: 700;
+  font-size: 1.25rem;
 }
 
-.sidebar-user {
-  padding: 2rem 1.5rem 1.5rem;
+.nav-brand .logo {
+  font-size: 2rem;
+  transition: all 0.3s ease;
+}
+
+/* شريط التنقل في الوسط */
+.nav-center {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex: 2;
+}
+
+.nav-item {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0.6rem 1.6rem;
+  border-radius: 25px;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  transition: left 0.5s;
+}
+
+.nav-item:hover::before {
+  left: 100%;
+}
+
+.nav-item:hover,
+.nav-item.active {
+  background: rgba(255, 255, 255, 0.18);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 255, 255, 0.15);
+}
+
+.nav-user {
   display: flex;
   align-items: center;
   gap: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  flex: 1;
+  justify-content: flex-end;
 }
 
-.user-avatar {
+.user-welcome {
+  color: white;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.logout-btn {
+  background: rgba(255, 107, 107, 0.3);
+  border: 1px solid rgba(255, 107, 107, 0.5);
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  backdrop-filter: blur(15px);
+}
+
+.logout-btn:hover {
+  background: rgba(255, 107, 107, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+}
+
+/* 📱 الشريط الجانبي */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  z-index: 1998;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 300px;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(25px);
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 1999;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-client.rtl .sidebar {
+  left: auto;
+  right: 0;
+  border-right: none;
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.sidebar-header {
+  padding: 2rem 1.5rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+
+.user-info-sidebar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-avatar-sidebar {
   width: 50px;
   height: 50px;
   border-radius: 50%;
@@ -269,62 +337,164 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-.user-info h3 {
+.user-details-sidebar h3 {
   color: white;
-  margin: 0;
+  margin: 0 0 0.25rem 0;
   font-size: 1.1rem;
   font-weight: 600;
 }
 
-.user-info p {
-  color: rgba(255, 255, 255, 0.7);
-  margin: 0;
+.user-details-sidebar p {
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0 0 0.5rem 0;
   font-size: 0.9rem;
+}
+
+.user-role {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 0.2rem 0.6rem;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.close-sidebar {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.3rem;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.dashboard-client.rtl .close-sidebar {
+  right: auto;
+  left: 1rem;
+}
+
+.close-sidebar:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
 }
 
 .sidebar-nav {
   padding: 1.5rem 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
   flex: 1;
 }
 
-.nav-item {
+.sidebar-nav-item {
+  width: 100%;
   background: none;
   border: none;
   padding: 1rem 1.5rem;
   text-align: left;
-  font-size: 1rem;
-  font-weight: 500;
   color: rgba(255, 255, 255, 0.85);
   cursor: pointer;
   transition: all 0.3s ease;
-  border-radius: 0;
-  border-left: 4px solid transparent;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
+  border-left: 4px solid transparent;
 }
 
-.nav-item:hover {
+.dashboard-client.rtl .sidebar-nav-item {
+  text-align: right;
+  border-left: none;
+  border-right: 4px solid transparent;
+}
+
+.sidebar-nav-item:hover {
   background: rgba(255, 255, 255, 0.1);
   color: white;
   border-left-color: rgba(255, 255, 255, 0.3);
 }
 
-.nav-item.active {
+.dashboard-client.rtl .sidebar-nav-item:hover {
+  border-right-color: rgba(255, 255, 255, 0.3);
+}
+
+.sidebar-nav-item.active {
   background: linear-gradient(90deg, rgba(255, 255, 255, 0.15), transparent);
   color: white;
   border-left-color: #ffeb3d;
   font-weight: 600;
 }
 
-/* 🔘 قسم تسجيل الخروج في أسفل الشريط */
-.sidebar-footer {
-  margin-top: auto;
+.dashboard-client.rtl .sidebar-nav-item.active {
+  border-right-color: #ffeb3d;
+}
+
+.nav-icon {
+  font-size: 1.2rem;
+  width: 24px;
+  text-align: center;
+}
+
+.nav-label {
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.sidebar-settings {
   padding: 1.5rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-settings h4 {
+  color: white;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.settings-item {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0.8rem 0;
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.settings-item:hover {
+  color: white;
+  transform: translateX(5px);
+}
+
+.dashboard-client.rtl .settings-item:hover {
+  transform: translateX(-5px);
+}
+
+.settings-icon {
+  font-size: 1.1rem;
+  width: 24px;
+  text-align: center;
+}
+
+.settings-label {
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+/* زر QR - يظهر على الهواتف فقط */
+.qr-button {
+  display: none; /* مخفي على Desktop */
+}
+
+.sidebar-footer {
+  padding: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: auto;
 }
 
 .logout-btn-sidebar {
@@ -350,45 +520,213 @@
   box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
 }
 
-/* 🏗️ هيكل المحتوى */
-.admin-content {
+.logout-icon {
+  font-size: 1.1rem;
+}
+
+/* 🎯 نافذة QR Code */
+.qr-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  z-index: 2998;
+}
+
+.qr-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 20px;
+  padding: 2rem;
+  z-index: 2999;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.qr-header {
   display: flex;
-  min-height: calc(100vh - 130px);
-  margin-top: 130px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.qr-header h3 {
+  color: white;
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.close-qr {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.3rem 0.6rem;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.close-qr:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.qr-content {
+  text-align: center;
+}
+
+.qr-code-placeholder {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.qr-animation {
+  width: 200px;
+  height: 200px;
+  background: white;
+  border-radius: 10px;
+  margin: 0 auto 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.qr-scanner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #667eea, transparent);
+}
+
+.qr-code-placeholder p {
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.qr-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.qr-action-btn {
+  flex: 1;
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.qr-action-btn.primary {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.qr-action-btn.primary:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.qr-action-btn.secondary {
+  background: rgba(255, 107, 107, 0.3);
+  color: white;
+  border: 1px solid rgba(255, 107, 107, 0.5);
+}
+
+.qr-action-btn.secondary:hover {
+  background: rgba(255, 107, 107, 0.5);
 }
 
 /* 🎯 المحتوى الرئيسي */
-.admin-main {
-  flex: 1;
+.dashboard-content {
+  margin-top: 130px; /* شريط اللغة + التنقل */
   padding: 2rem;
-  overflow-y: auto;
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(15px);
   position: relative;
   z-index: 1;
-  margin-left: 0;
   transition: margin-left 0.3s ease;
-  min-height: calc(100vh - 130px);
 }
 
-.admin-sidebar.open ~ .admin-main {
-  margin-left: 280px;
+/* 📊 قسم النظرة العامة */
+.overview-section {
+  margin-bottom: 4rem;
 }
 
-.admin-main h2 {
-  font-size: 2rem;
+.welcome-card {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(25px);
+  border-radius: 20px;
+  padding: 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-content h1 {
+  font-size: 2.5rem;
   font-weight: 700;
   color: white;
-  margin-bottom: 2rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* 📊 شبكة الإحصائيات - ألوان محسنة */
+.welcome-content p {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 1.5rem;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.user-name {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: white;
+}
+
+.user-email {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.welcome-visual {
+  position: relative;
+}
+
+.floating-package {
+  font-size: 4rem;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+/* 📊 شبكة الإحصائيات */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1.5rem;
-  margin-bottom: 2rem;
+  margin-bottom: 3rem;
 }
 
 .stat-card {
@@ -428,7 +766,6 @@
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
-/* أيقونات الإحصائيات بألوان مختلفة وواضحة */
 .stat-icon {
   font-size: 2.5rem;
   width: 70px;
@@ -442,20 +779,20 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-.stat-icon.users {
+.stat-icon.orders {
   background: linear-gradient(45deg, #667eea, #764ba2);
 }
 
-.stat-icon.orders {
-  background: linear-gradient(45deg, #f093fb, #f5576c);
+.stat-icon.pending {
+  background: linear-gradient(45deg, #ffa726, #ff9800);
 }
 
-.stat-icon.deliveries {
-  background: linear-gradient(45deg, #4facfe, #00f2fe);
+.stat-icon.delivered {
+  background: linear-gradient(45deg, #4caf50, #8bc34a);
 }
 
-.stat-icon.revenue {
-  background: linear-gradient(45deg, #43e97b, #38f9d7);
+.stat-icon.tracking {
+  background: linear-gradient(45deg, #2196f3, #03a9f4);
 }
 
 .stat-info h3 {
@@ -498,23 +835,546 @@
   background: linear-gradient(45deg, #2196f3, #03a9f4);
 }
 
-.stat-badge.revenue {
-  background: linear-gradient(45deg, #9c27b0, #e91e63);
+/* 🎯 الإجراءات السريعة */
+.quick-actions {
+  margin-bottom: 3rem;
 }
 
-/* 📈 قسم المخططات */
-.charts-section {
+.quick-actions h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.actions-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
 }
 
-.chart-card {
+.action-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 1.5rem 1rem;
+  border-radius: 15px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  backdrop-filter: blur(15px);
+}
+
+.action-btn.primary {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.action-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(255, 255, 255, 0.15);
+}
+
+.action-icon {
+  font-size: 2rem;
+}
+
+.action-text {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* 📦 قسم الطلبيات */
+.orders-section,
+.profile-section,
+.settings-section {
+  margin-bottom: 4rem;
+  padding: 2rem 0;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: white;
+}
+
+.section-header h2 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.section-header p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.orders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.order-card {
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(20px);
   padding: 1.5rem;
   border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.order-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.order-id {
+  font-weight: 600;
+  color: white;
+  font-size: 0.9rem;
+}
+
+.order-status {
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.order-status.pending {
+  background: rgba(255, 167, 38, 0.3);
+  color: #ffa726;
+  border: 1px solid rgba(255, 167, 38, 0.5);
+}
+
+.order-status.delivered {
+  background: rgba(76, 175, 80, 0.3);
+  color: #4caf50;
+  border: 1px solid rgba(76, 175, 80, 0.5);
+}
+
+.order-details {
+  margin-bottom: 1.5rem;
+}
+
+.order-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 0.5rem;
+}
+
+.order-date,
+.order-address {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 0.25rem;
+}
+
+.order-action {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 0.8rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  backdrop-filter: blur(15px);
+}
+
+.order-action:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+/* 👤 قسم الملف الشخصي */
+.profile-card {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(25px);
+  border-radius: 20px;
+  padding: 2.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.profile-info h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  margin: 0 0 0.25rem 0;
+}
+
+.profile-info p {
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0 0 0.5rem 0;
+}
+
+.member-since {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.profile-details {
+  margin-bottom: 2rem;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.detail-item:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.detail-value {
+  color: white;
+}
+
+.client-badge {
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.edit-profile-btn,
+.change-password-btn {
+  flex: 1;
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.edit-profile-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.edit-profile-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.change-password-btn {
+  background: rgba(103, 126, 234, 0.3);
+  color: white;
+  border: 1px solid rgba(103, 126, 234, 0.5);
+}
+
+.change-password-btn:hover {
+  background: rgba(103, 126, 234, 0.5);
+  transform: translateY(-2px);
+}
+
+/* ⚙️ قسم الإعدادات */
+.settings-card {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(25px);
+  border-radius: 20px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.settings-item-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.settings-item-card:last-child {
+  border-bottom: none;
+}
+
+.settings-info {
+  flex: 1;
+}
+
+.settings-info h4 {
+  color: white;
+  margin: 0 0 0.25rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.settings-info p {
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* Toggle Switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.3);
+  transition: .4s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #667eea;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+/* Language Select */
+.language-select {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  backdrop-filter: blur(15px);
+}
+
+.language-select option {
+  background: #667eea;
+  color: white;
+}
+
+/* 🦶 الفوتر */
+.dashboard-footer {
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(15px);
+  padding: 2rem;
+  color: white;
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 2rem;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.footer-links {
+  display: flex;
+  gap: 1rem;
+}
+
+.footer-links button {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  transition: color 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.footer-links button:hover {
+  color: white;
+}
+
+/* وسائط الاستعلام للهواتف */
+@media (max-width: 768px) {
+  .language-darkmode-bar {
+    padding: 0.8rem 1rem;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .language-section {
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+  
+  .language-buttons {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .dashboard-nav {
+    top: 120px;
+    padding: 1rem;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .nav-center {
+    display: none; /* إخفاء شريط التنقل المركزي على الهواتف */
+  }
+  
+  .nav-user {
+    justify-content: center;
+  }
+  
+  .user-welcome {
+    display: none; /* إخفاء الترحيب على الهواتف */
+  }
+  
+  .welcome-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 2rem;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .actions-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .profile-actions {
+    flex-direction: column;
+  }
+  
+  .footer-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  /* إظهار زر QR على الهواتف فقط */
+  .qr-button {
+    display: flex;
+  }
+  
+  .sidebar {
+    width: 280px;
+  }
+}
+
+/* تحسينات للأجهزة اللوحية */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .actions-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .sidebar {
+    width: 280px;
+  }
+}
+
+/* تحسينات الوضع الليلي */
+.dashboard-client.dark .language-darkmode-bar,
+.dashboard-client.dark .dashboard-nav,
+.dashboard-client.dark .sidebar,
+.dashboard-client.dark .welcome-card,
+.dashboard-client.dark .stat-card,
+.dashboard-client.dark .order-card,
+.dashboard-client.dark .profile-card,
+.dashboard-client.dark .settings-card,
+.dashboard-client.dark .qr-modal {
+  background: rgba(0, 0, 0, 0.25);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.dashboard-client.dark .action-btn {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-client.dark .dashboard-footer {
+  background: rgba(0, 0, 0, 0.35);
 }

@@ -12,6 +12,7 @@ import DashboardAdmin from './pages/DashboardAdmin.jsx';
 import DashboardClient from './pages/DashboardClient.jsx';
 import DashboardLivreur from './pages/DashboardLivreur.jsx';
 import VerifyOtp from './pages/VerifyOtp.jsx';
+import ResetPassword from './pages/ResetPassword.jsx';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
             {<Route path="/dashboard-client" element={<DashboardClient />} />}
             {<Route path="/dashboard-livreur" element={<DashboardLivreur />} />}
             <Route path="/verify-otp" element={<VerifyOtp />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             {/* 🔀 إعادة التوجيه للصفحة الرئيسية */}
             <Route path="*" element={<Login />} />
           </Routes>

@@ -1,8 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import "../style/homepage.css";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next"; 
+
+// TODO: استيراد تكوين Firebase
+// import { db } from "../config/firebase";
+// import { collection, addDoc, doc, getDoc, updateDoc, onSnapshot } from "firebase/firestore";
 
 export default function Homepage({ globalDarkMode, updateGlobalDarkMode }) {
   const [email, setEmail] = useState("");
@@ -15,10 +19,16 @@ export default function Homepage({ globalDarkMode, updateGlobalDarkMode }) {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
   const [isLoginOpen, setIsLoginOpen] = useState(true);
+  const [showQRLogin, setShowQRLogin] = useState(false);
+  const [qrCodeUrl, setQrCodeUrl] = useState("");
+  const [qrSessionId, setQrSessionId] = useState("");
+  const [qrLoading, setQrLoading] = useState(false);
+  const [qrStatus, setQrStatus] = useState(""); // "waiting", "scanned", "confirmed", "error"
   
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  
+  const checkIntervalRef = useRef(null);
+
   // 🔹 إحصائيات ديناميكية
   const [stats, setStats] = useState({
     deliveries: 0,
@@ -38,7 +48,6 @@ export default function Homepage({ globalDarkMode, updateGlobalDarkMode }) {
       }));
     }, 2000);
 
-    // قيم ابتدائية
     setStats({
       deliveries: 28476,
       users: 12543,
@@ -62,11 +71,19 @@ export default function Homepage({ globalDarkMode, updateGlobalDarkMode }) {
     }
   }, [i18n, updateGlobalDarkMode]);
 
-  // 🌍 تغيير اللغة مع تحديث الاتجاه
+  // 🔹 تنظيف الـ intervals
+  useEffect(() => {
+    return () => {
+      if (checkIntervalRef.current) {
+        clearInterval(checkIntervalRef.current);
+      }
+    };
+  }, []);
+
+  // 🌍 تغيير اللغة
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
     localStorage.setItem('preferredLanguage', lang);
-    // تحديث اتجاه الصفحة للغة العربية
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
     document.documentElement.lang = lang;
   };
@@ -82,7 +99,7 @@ export default function Homepage({ globalDarkMode, updateGlobalDarkMode }) {
     }
   };
 
-  // ✅ تسجيل الدخول
+  // ✅ تسجيل الدخول العادي
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -102,13 +119,11 @@ export default function Homepage({ globalDarkMode, updateGlobalDarkMode }) {
         return;
       }
 
-      // ✅ تسجيل الدخول ناجح
       setIsLoggedIn(true);
       setUserRole(data.user.role);
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("token", "user-token");
 
-      // توجيه إلى الداشبورد
       switch(data.user.role) {
         case 'admin':
           navigate('/dashboard-admin');
@@ -159,6 +174,119 @@ export default function Homepage({ globalDarkMode, updateGlobalDarkMode }) {
     }
   };
 
+ // 🎯 إنشاء QR code - مع Firebase الحقيقي
+const generateQRCode = async () => {
+  setQrLoading(true);
+  setQrStatus("waiting");
+  
+  try {
+    const response = await fetch("https://livraison-api-x45n.onrender.com/api/generate-qr-session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" }
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to generate QR session");
+    }
+
+    setQrSessionId(data.session_id);
+    setQrCodeUrl(data.qr_url);
+    
+    // بدء فحص حالة الجلسة
+    startSessionChecking(data.session_id);
+    
+  } catch (error) {
+    console.error("❌ " + t("qr_generation_error"), error);
+    setQrStatus("error");
+    alert("❌ " + t("qr_generation_error"));
+  } finally {
+    setQrLoading(false);
+  }
+};
+
+// 🔄 فحص حالة الجلسة مع Firebase
+const startSessionChecking = (sessionId) => {
+  // فحص كل 2 ثانية
+  checkIntervalRef.current = setInterval(async () => {
+    try {
+      const response = await fetch(`https://livraison-api-x45n.onrender.com/api/check-qr-session/${sessionId}`);
+      const data = await response.json();
+
+      if (response.ok) {
+        setQrStatus(data.status);
+        
+        if (data.status === "confirmed" && data.user_data) {
+          // تسجيل الدخول تلقائياً
+          handleQRLogin(data.user_data);
+          clearInterval(checkIntervalRef.current);
+        }
+        
+        if (data.status === "expired") {
+          clearInterval(checkIntervalRef.current);
+        }
+      }
+    } catch (error) {
+      console.error("❌ Error checking session:", error);
+    }
+  }, 2000);
+};
+
+// 🔐 تسجيل الدخول بعد تأكيد QR
+const handleQRLogin = async (userData) => {
+  if (!userData) {
+    alert("❌ " + t("qr_login_error"));
+    return;
+  }
+  
+  setIsLoggedIn(true);
+  setUserRole(userData.role);
+  localStorage.setItem("user", JSON.stringify(userData));
+  localStorage.setItem("token", "qr-auth-token");
+  localStorage.setItem("login_method", "qr_code");
+
+  // إظهار رسالة نجاح
+  setQrStatus("confirmed");
+  
+  // الانتقال بعد ثانيتين
+  setTimeout(() => {
+    switch(userData.role) {
+      case 'admin':
+        navigate('/dashboard-admin');
+        break;
+      case 'livreur':
+        navigate('/dashboard-livreur');
+        break;
+      case 'client':
+        navigate('/dashboard-client');
+        break;
+      default:
+        navigate('/dashboard-client');
+    }
+  }, 2000);
+};
+
+
+  // 🔄 فحص حالة الجلسة - جاهز لربط Firebase
+  const startFirebaseListener = (sessionId) => {
+    // TODO: تنفيذ الاستماع لـ Firebase
+    /*
+    const qrSessionRef = doc(db, "qrSessions", sessionId);
+    
+    const unsubscribe = onSnapshot(qrSessionRef, (doc) => {
+      if (doc.exists()) {
+        const sessionData = doc.data();
+        setQrStatus(sessionData.status);
+        
+        if (sessionData.status === "confirmed" && sessionData.user_data) {
+          handleQRLogin(sessionData.user_data);
+          unsubscribe();
+        }
+      }
+    });
+    */
+  };
   // 🎯 التمرير إلى الأقسام
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
@@ -166,6 +294,17 @@ export default function Homepage({ globalDarkMode, updateGlobalDarkMode }) {
       element.scrollIntoView({ behavior: 'smooth' });
       setActiveSection(sectionId);
     }
+  };
+
+  // تنظيف QR session
+  const handleCloseQRModal = () => {
+    setShowQRLogin(false);
+    if (checkIntervalRef.current) {
+      clearInterval(checkIntervalRef.current);
+    }
+    setQrCodeUrl("");
+    setQrSessionId("");
+    setQrStatus("");
   };
 
   // إذا كان المستخدم مسجلاً
@@ -201,7 +340,7 @@ export default function Homepage({ globalDarkMode, updateGlobalDarkMode }) {
         <div className="floating-shape shape-4"></div>
       </div>
 
-      {/* 🌐 شريط اللغة والوضع الليلي المحسّن */}
+      {/* 🌐 شريط اللغة والوضع الليلي */}
       <div className={`language-darkmode-bar ${i18n.language === "ar" ? "rtl" : "ltr"}`}>
         <div className="language-section">
           <span className="section-label">{t("language")}:</span>
@@ -242,7 +381,7 @@ export default function Homepage({ globalDarkMode, updateGlobalDarkMode }) {
         </div>
       </div>
 
-      {/* 🎯 التنقل الديناميكي */}
+      {/* 🎯 التنقل */}
       <motion.nav 
         className="dynamic-nav"
         initial={{ y: -100 }}
@@ -259,7 +398,6 @@ export default function Homepage({ globalDarkMode, updateGlobalDarkMode }) {
           <span>Livraison Express</span>
         </div>
         
-        {/* شريط التنقل في الوسط */}
         <div className="nav-center">
           {['hero', 'stats', 'login'].map((section) => (
             <button
@@ -274,11 +412,10 @@ export default function Homepage({ globalDarkMode, updateGlobalDarkMode }) {
           ))}
         </div>
 
-        {/* مساحة فارغة للحفاظ على التوازن */}
         <div className="nav-placeholder"></div>
       </motion.nav>
 
-      {/* 🎯 القسم الأول: الهيرو */}
+      {/* 🎯 الهيرو */}
       <section id="hero" className="hero-dynamic">
         <motion.div
           className="hero-content"
@@ -328,56 +465,14 @@ export default function Homepage({ globalDarkMode, updateGlobalDarkMode }) {
           </motion.div>
         </motion.div>
 
-        {/* 🎨 عناصر بصرية ديناميكية */}
         <div className="hero-visuals">
-          <motion.div
-            className="visual-element delivery-truck"
-            animate={{ 
-              x: [0, 20, 0],
-              y: [0, -10, 0]
-            }}
-            transition={{ 
-              duration: 4,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          >
-            🚚
-          </motion.div>
-          <motion.div
-            className="visual-element package"
-            animate={{ 
-              y: [0, -15, 0],
-              rotate: [0, 5, 0, -5, 0]
-            }}
-            transition={{ 
-              duration: 3,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 1
-            }}
-          >
-            📦
-          </motion.div>
-          <motion.div
-            className="visual-element location"
-            animate={{ 
-              scale: [1, 1.2, 1],
-              opacity: [0.7, 1, 0.7]
-            }}
-            transition={{ 
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 2
-            }}
-          >
-            📍
-          </motion.div>
+          <motion.div className="visual-element delivery-truck" animate={{ x: [0, 20, 0], y: [0, -10, 0] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}>🚚</motion.div>
+          <motion.div className="visual-element package" animate={{ y: [0, -15, 0], rotate: [0, 5, 0, -5, 0] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1 }}>📦</motion.div>
+          <motion.div className="visual-element location" animate={{ scale: [1, 1.2, 1], opacity: [0.7, 1, 0.7] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 2 }}>📍</motion.div>
         </div>
       </section>
 
-      {/* 📊 القسم الثاني: الإحصائيات */}
+      {/* 📊 الإحصائيات */}
       <section id="stats" className="stats-dynamic">
         <motion.div
           className="stats-container"
@@ -394,66 +489,33 @@ export default function Homepage({ globalDarkMode, updateGlobalDarkMode }) {
           </motion.h2>
           
           <div className="stats-grid">
-            <motion.div
-              className="stat-card"
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3 }}
-              whileHover={{ scale: 1.05 }}
-            >
-              <div className="stat-icon">📦</div>
-              <div className="stat-number">
-                {stats.deliveries.toLocaleString()}
-              </div>
-              <div className="stat-label">{t("deliveries_completed")}</div>
-              <div className="stat-badge">{t("live")}</div>
-            </motion.div>
-            
-            <motion.div
-              className="stat-card"
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.4 }}
-              whileHover={{ scale: 1.05 }}
-            >
-              <div className="stat-icon">👥</div>
-              <div className="stat-number">
-                {stats.users.toLocaleString()}
-              </div>
-              <div className="stat-label">{t("happy_customers")}</div>
-              <div className="stat-badge">{t("growing")}</div>
-            </motion.div>
-            
-            <motion.div
-              className="stat-card"
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.5 }}
-              whileHover={{ scale: 1.05 }}
-            >
-              <div className="stat-icon">🌍</div>
-              <div className="stat-number">{stats.cities}</div>
-              <div className="stat-label">{t("cities_covered")}</div>
-              <div className="stat-badge">{t("nationwide")}</div>
-            </motion.div>
-            
-            <motion.div
-              className="stat-card"
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.6 }}
-              whileHover={{ scale: 1.05 }}
-            >
-              <div className="stat-icon">⭐</div>
-              <div className="stat-number">{stats.satisfaction}%</div>
-              <div className="stat-label">{t("satisfaction_rate")}</div>
-              <div className="stat-badge">{t("excellent")}</div>
-            </motion.div>
+            {[
+              { icon: "📦", value: stats.deliveries, label: t("deliveries_completed"), badge: t("live") },
+              { icon: "👥", value: stats.users, label: t("happy_customers"), badge: t("growing") },
+              { icon: "🌍", value: stats.cities, label: t("cities_covered"), badge: t("nationwide") },
+              { icon: "⭐", value: `${stats.satisfaction}%`, label: t("satisfaction_rate"), badge: t("excellent") }
+            ].map((stat, index) => (
+              <motion.div
+                key={index}
+                className="stat-card"
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3 + index * 0.1 }}
+                whileHover={{ scale: 1.05 }}
+              >
+                <div className="stat-icon">{stat.icon}</div>
+                <div className="stat-number">
+                  {typeof stat.value === 'number' ? stat.value.toLocaleString() : stat.value}
+                </div>
+                <div className="stat-label">{stat.label}</div>
+                <div className="stat-badge">{stat.badge}</div>
+              </motion.div>
+            ))}
           </div>
         </motion.div>
       </section>
 
-      {/* 🔐 القسم الثالث: تسجيل الدخول */}
+      {/* 🔐 تسجيل الدخول */}
       <section id="login" className="login-dynamic">
         <motion.div
           className="login-section-header"
@@ -464,7 +526,6 @@ export default function Homepage({ globalDarkMode, updateGlobalDarkMode }) {
           <h2>{t("account_access")}</h2>
           <p>{t("sign_in_to_manage")}</p>
           
-          {/* زر فتح/إغلاق نموذج تسجيل الدخول */}
           <motion.button
             className="login-toggle-btn"
             onClick={() => setIsLoginOpen(!isLoginOpen)}
@@ -486,7 +547,6 @@ export default function Homepage({ globalDarkMode, updateGlobalDarkMode }) {
             >
               <AnimatePresence mode="wait">
                 {!showForgotPassword ? (
-                  // نموذج تسجيل الدخول
                   <motion.div
                     key="login-form"
                     initial={{ opacity: 0, x: 20 }}
@@ -545,7 +605,6 @@ export default function Homepage({ globalDarkMode, updateGlobalDarkMode }) {
                         />
                       </motion.div>
 
-                      {/* رابط نسيان كلمة السر */}
                       <motion.div
                         className="forgot-password-link"
                         initial={{ opacity: 0 }}
@@ -579,6 +638,29 @@ export default function Homepage({ globalDarkMode, updateGlobalDarkMode }) {
                           `🔐 ${t("sign_in")}`
                         )}
                       </motion.button>
+
+                      {/* 🔐 خيار QR */}
+                      <motion.div
+                        className="qr-login-option"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 1 }}
+                      >
+                        <div className="divider">
+                          <span>{t("or")}</span>
+                        </div>
+                        
+                        <motion.button
+                          type="button"
+                          className="qr-login-btn"
+                          onClick={() => setShowQRLogin(true)}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          <span className="qr-icon">📱</span>
+                          {t("login_with_qr")}
+                        </motion.button>
+                      </motion.div>
                     </motion.form>
 
                     <motion.div
@@ -599,7 +681,6 @@ export default function Homepage({ globalDarkMode, updateGlobalDarkMode }) {
                     </motion.div>
                   </motion.div>
                 ) : (
-                  // نموذج نسيان كلمة السر
                   <motion.div
                     key="forgot-password-form"
                     initial={{ opacity: 0, x: 20 }}
@@ -671,7 +752,121 @@ export default function Homepage({ globalDarkMode, updateGlobalDarkMode }) {
         </AnimatePresence>
       </section>
 
-      {/* 🦶 الفوتر البسيط */}
+      {/* 🎯 نافذة QR */}
+      <AnimatePresence>
+        {showQRLogin && (
+          <>
+            <motion.div
+              className="qr-login-overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={handleCloseQRModal}
+            />
+            <motion.div
+              className="qr-login-modal"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ type: "spring", damping: 25 }}
+            >
+              <div className="qr-login-header">
+                <h3>📱 {t("qr_login")}</h3>
+                <button 
+                  className="close-qr-login"
+                  onClick={handleCloseQRModal}
+                >
+                  ✕
+                </button>
+              </div>
+              
+              <div className="qr-login-content">
+                {!qrCodeUrl ? (
+                  <div className="qr-init-state">
+                    <div className="qr-init-icon">📱</div>
+                    <h4>{t("qr_ready_title")}</h4>
+                    <p>{t("qr_ready_description")}</p>
+                    
+                    <motion.button
+                      className="generate-qr-btn"
+                      onClick={generateQRCode}
+                      disabled={qrLoading}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {qrLoading ? (
+                        <>
+                          <div className="spinner"></div>
+                          {t("generating_qr")}...
+                        </>
+                      ) : (
+                        `🎯 ${t("generate_qr")}`
+                      )}
+                    </motion.button>
+                  </div>
+                ) : (
+                  <div className="qr-display-state">
+                    <div className="qr-code-container">
+                      <img 
+                        src={qrCodeUrl} 
+                        alt="QR Code" 
+                        className="qr-code-image"
+                      />
+                      
+                      <div className={`qr-status ${qrStatus}`}>
+                        {qrStatus === "waiting" && (
+                          <div className="status-waiting">
+                            <div className="pulse-dot"></div>
+                            <span>{t("waiting_scan")}</span>
+                          </div>
+                        )}
+                        
+                        {qrStatus === "scanned" && (
+                          <div className="status-scanning">
+                            <div className="scanning-animation">🔍</div>
+                            <span>{t("scanning_qr")}</span>
+                          </div>
+                        )}
+                        
+                        {qrStatus === "confirmed" && (
+                          <div className="status-success">
+                            <div className="success-icon">✅</div>
+                            <span>{t("login_success")}</span>
+                          </div>
+                        )}
+                        
+                        {qrStatus === "error" && (
+                          <div className="status-error">
+                            <div className="error-icon">❌</div>
+                            <span>{t("qr_error")}</span>
+                            <button 
+                              className="retry-btn"
+                              onClick={generateQRCode}
+                            >
+                              {t("retry")}
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className="qr-instructions">
+                      <h4>📋 {t("how_to_use")}:</h4>
+                      <ol>
+                        <li>{t("step1_open_app")}</li>
+                        <li>{t("step2_scan_qr")}</li>
+                        <li>{t("step3_confirm_login")}</li>
+                      </ol>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* 🦶 الفوتر */}
       <footer className="simple-footer">
         <div className="footer-content">
           <p>&copy; 2024 Livraison Express. {t("all_rights_reserved")}</p>
