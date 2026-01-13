@@ -8,11 +8,14 @@ import i18n from './i18n';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 // يمكنك إضافة المكونات الأخرى لاحقاً
+import LoginQRscanner from './pages/LoginQRscanner.jsx';
 import DashboardAdmin from './pages/DashboardAdmin.jsx';
 import DashboardClient from './pages/DashboardClient.jsx';
 import DashboardLivreur from './pages/DashboardLivreur.jsx';
 import VerifyOtp from './pages/VerifyOtp.jsx';
 import ResetPassword from './pages/ResetPassword.jsx';
+import DashboardPartner from './pages/DashboardPartner.jsx';
+
 
 function App() {
   return (
@@ -25,12 +28,15 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             
-            {/* 🏠 مسارات Dashboard (معلق حالياً) */}
-            {<Route path="/dashboard-admin" element={<DashboardAdmin />} />}
-            {<Route path="/dashboard-client" element={<DashboardClient />} />}
-            {<Route path="/dashboard-livreur" element={<DashboardLivreur />} />}
+            {/* 🏠 مسارات Dashboard */}
+            <Route path="/QR-scanner" element={<LoginQRscanner />} />
+            <Route path="/dashboard-admin" element={<DashboardAdmin />} />
+            <Route path="/dashboard-client" element={<DashboardClient />} />
+            <Route path="/dashboard-livreur" element={<DashboardLivreur />} />
             <Route path="/verify-otp" element={<VerifyOtp />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/dashboard-partner" element={<DashboardPartner />} />
+            
             {/* 🔀 إعادة التوجيه للصفحة الرئيسية */}
             <Route path="*" element={<Login />} />
           </Routes>

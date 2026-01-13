@@ -975,7 +975,119 @@
 .homepage-container.dark .language-buttons button.active {
   background: rgba(255, 255, 255, 0.25);
 }
-/* 🔐 أنماط تسجيل الدخول عبر QR code - النسخة الجديدة */
+/* ====== 🆕 أنماط QR Login المحسنة ====== */
+
+/* نافذة QR مركزية ومتجاوبة */
+.qr-login-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.qr-login-modal {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 0;
+  max-width: 380px;
+  width: 100%;
+  max-height: 85vh;
+  overflow: hidden;
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+
+.dark .qr-login-modal {
+  background: rgba(30, 30, 40, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* الهيدر المحسن */
+.qr-login-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 1.5rem 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+}
+
+.dark .qr-login-header {
+  background: rgba(40, 40, 50, 0.5);
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.qr-login-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.dark .qr-login-header h3 {
+  color: white;
+}
+
+.qr-header-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.refresh-qr-btn,
+.close-qr-login {
+  background: rgba(0, 0, 0, 0.08);
+  border: none;
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: all 0.2s ease;
+  color: #666;
+}
+
+.dark .refresh-qr-btn,
+.dark .close-qr-login {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ccc;
+}
+
+.refresh-qr-btn:hover,
+.close-qr-login:hover {
+  background: rgba(0, 0, 0, 0.15);
+  transform: scale(1.1);
+}
+
+.dark .refresh-qr-btn:hover,
+.dark .close-qr-login:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* المحتوى الرئيسي */
+.qr-login-content {
+  padding: 1.5rem;
+  max-height: calc(85vh - 80px);
+  overflow-y: auto;
+}
+
+/* الحالة الأولية */
 .qr-init-state {
   text-align: center;
   padding: 2rem 1rem;
@@ -983,74 +1095,590 @@
 
 .qr-init-icon {
   font-size: 4rem;
-  margin-bottom: 1rem;
-  opacity: 0.8;
+  margin-bottom: 1.5rem;
+  opacity: 0.9;
 }
 
 .qr-init-state h4 {
-  color: white;
-  margin-bottom: 0.5rem;
+  color: #1a1a1a;
+  margin: 0 0 0.5rem 0;
   font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.dark .qr-init-state h4 {
+  color: white;
 }
 
 .qr-init-state p {
-  color: rgba(255, 255, 255, 0.8);
-  margin-bottom: 2rem;
+  color: #666;
+  margin: 0 0 2rem 0;
   font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.dark .qr-init-state p {
+  color: #ccc;
 }
 
 .generate-qr-btn {
-  background: rgba(255, 255, 255, 0.2);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
+  border: none;
   padding: 1rem 2rem;
   border-radius: 12px;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  backdrop-filter: blur(15px);
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  width: 100%;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
 .generate-qr-btn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.3);
-  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 
 .generate-qr-btn:disabled {
   opacity: 0.7;
   cursor: not-allowed;
+  transform: none !important;
 }
 
-/* حالة عرض QR code */
+/* حالة عرض QR */
 .qr-display-state {
   text-align: center;
 }
 
-.qr-code-container {
+/* مؤشر الحالة */
+.qr-status-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem 1rem;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.dark .qr-status-indicator {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.status-dot.waiting {
+  background: #f59e0b;
+}
+
+.status-dot.scanned {
+  background: #3b82f6;
+}
+
+.status-dot.confirmed {
+  background: #10b981;
+}
+
+.status-dot.redirecting {
+  background: #10b981;
+  animation: pulse 0.5s infinite;
+}
+
+.status-dot.error {
+  background: #ef4444;
+}
+
+.status-text {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #1a1a1a;
+}
+
+.dark .status-text {
+  color: white;
+}
+
+/* حاوية QR مع تأثيرات */
+.qr-image-wrapper {
   background: white;
   padding: 1.5rem;
-  border-radius: 15px;
+  border-radius: 16px;
   margin-bottom: 1.5rem;
   position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.dark .qr-image-wrapper {
+  background: #1e293b;
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .qr-code-image {
-  width: 200px;
-  height: 200px;
-  border-radius: 10px;
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+  border-radius: 8px;
+  display: block;
+  margin: 0 auto;
 }
 
-.qr-status {
-  margin-top: 1rem;
+/* تأثير المسح الناجح */
+.scan-success-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(16, 185, 129, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  font-size: 3rem;
+  color: white;
+}
+
+/* معلومات الجلسة */
+.session-info {
+  background: rgba(0, 0, 0, 0.04);
   padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  backdrop-filter: blur(10px);
+}
+
+.dark .session-info {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.session-id {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'Monaco', 'Consolas', monospace;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.dark .session-id {
+  color: #ccc;
+}
+
+.session-id span {
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.dark .session-id span {
+  color: white;
+}
+
+.session-id code {
+  background: rgba(0, 0, 0, 0.1);
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  color: #333;
+}
+
+.dark .session-id code {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ccc;
+}
+
+.copy-btn {
+  background: rgba(0, 0, 0, 0.1);
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  color: #666;
+}
+
+.dark .copy-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ccc;
+}
+
+.copy-btn:hover {
+  background: rgba(0, 0, 0, 0.15);
+  transform: scale(1.1);
+}
+
+/* مؤشر التقدم */
+.progress-indicator {
+  margin: 1.5rem 0;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.dark .progress-bar {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981, #34d399);
+  border-radius: 3px;
+  transition: width 0.5s ease;
+  width: 0%;
+}
+
+/* التعليمات التفاعلية */
+.qr-instructions {
+  background: rgba(0, 0, 0, 0.04);
+  padding: 1.5rem;
+  border-radius: 16px;
+  margin-bottom: 1.5rem;
+  backdrop-filter: blur(10px);
+}
+
+.dark .qr-instructions {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.qr-instructions h4 {
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dark .qr-instructions h4 {
+  color: white;
+}
+
+.qr-instructions ol {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: #666;
+}
+
+.dark .qr-instructions ol {
+  color: #ccc;
+}
+
+.qr-instructions li {
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  padding: 0.5rem 0;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  opacity: 0.7;
+}
+
+.qr-instructions li.active-step {
+  opacity: 1;
+  background: rgba(102, 126, 234, 0.1);
+  padding: 0.5rem;
+  font-weight: 600;
+  color: #667eea;
+}
+
+.dark .qr-instructions li.active-step {
+  background: rgba(102, 126, 234, 0.2);
+  color: #a5b4fc;
+}
+
+.qr-instructions li:last-child {
+  margin-bottom: 0;
+}
+
+/* إجراءات إضافية */
+.qr-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.action-btn {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: #666;
+}
+
+.dark .action-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #ccc;
+}
+
+.action-btn:hover {
+  background: rgba(255, 255, 255, 0.8);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dark .action-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.action-btn.primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+}
+
+.action-btn.primary:hover {
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* رسائل النجاح والخطأ */
+.success-message,
+.error-message {
+  text-align: center;
+  padding: 2rem 1rem;
+  border-radius: 16px;
+  margin: 1rem 0;
+}
+
+.success-message {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.error-message {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.success-icon,
+.error-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.success-message h4,
+.error-message h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.success-message h4 {
+  color: #065f46;
+}
+
+.error-message h4 {
+  color: #dc2626;
+}
+
+.success-message p,
+.error-message p {
+  margin: 0 0 1.5rem 0;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.retry-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
   border-radius: 10px;
   font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.retry-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* التايمر */
+.qr-timer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.02);
+  text-align: center;
+}
+
+.dark .qr-timer {
+  border-top-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.timer-text {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.dark .timer-text {
+  color: #ccc;
+}
+
+.time-remaining {
+  color: #ef4444;
+  font-weight: 700;
+}
+
+/* ====== 📱 تحسينات للهواتف ====== */
+@media (max-width: 768px) {
+  .qr-login-overlay {
+    padding: 0.5rem;
+    align-items: flex-start;
+    padding-top: 10vh;
+  }
+  
+  .qr-login-modal {
+    max-height: 80vh;
+    max-width: 95%;
+    border-radius: 20px;
+  }
+  
+  .qr-login-content {
+    padding: 1rem;
+    max-height: calc(80vh - 70px);
+  }
+  
+  .qr-image-wrapper {
+    padding: 1rem;
+  }
+  
+  .qr-code-image {
+    max-width: 180px;
+  }
+  
+  .qr-instructions {
+    padding: 1rem;
+  }
+  
+  .qr-actions {
+    flex-direction: column;
+  }
+  
+  .action-btn {
+    width: 100%;
+  }
+  
+  .qr-status-indicator {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+  
+  .session-id {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+  
+  .session-id code {
+    font-size: 0.75rem;
+    word-break: break-all;
+  }
+}
+
+@media (max-width: 480px) {
+  .qr-login-modal {
+    max-width: 100%;
+    border-radius: 16px 16px 0 0;
+    margin-top: 5vh;
+  }
+  
+  .qr-login-header {
+    padding: 1rem 1rem 0.75rem;
+  }
+  
+  .qr-login-content {
+    padding: 0.75rem;
+  }
+  
+  .qr-code-image {
+    max-width: 160px;
+  }
+  
+  .qr-init-state {
+    padding: 1.5rem 0.5rem;
+  }
+  
+  .qr-init-icon {
+    font-size: 3rem;
+  }
+}
+
+/* ====== ♿ تحسينات إمكانية الوصول ====== */
+@media (prefers-reduced-motion: reduce) {
+  .status-dot,
+  .qr-image-wrapper,
+  .generate-qr-btn,
+  .action-btn,
+  .copy-btn {
+    animation: none;
+    transition: none;
+  }
+  
+  .generate-qr-btn:hover,
+  .action-btn:hover,
+  .copy-btn:hover {
+    transform: none;
+  }
+}
+
+/* ====== 🌙 تحسينات الوضع الليلي ====== */
+.dark .qr-login-modal {
+  color-scheme: dark;
+}
+
+.dark .qr-image-wrapper {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.dark .success-message {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.dark .error-message {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.dark .success-message h4 {
+  color: #34d399;
+}
+
+.dark .error-message h4 {
+  color: #f87171;
 }
 
 .status-waiting {
@@ -1357,4 +1985,572 @@
   border-radius: 8px;
   cursor: pointer;
   margin-top: 1rem;
+}
+/* ====== 🆕 إصلاح مركزة نافذة QR ====== */
+
+.qr-modal-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2001;
+  padding: 20px;
+  pointer-events: none;
+}
+
+.qr-login-modal {
+  pointer-events: all;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 0;
+  width: 100%;
+  max-width: 400px;
+  max-height: 85vh;
+  overflow: hidden;
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  flex-direction: column;
+}
+
+.dark .qr-login-modal {
+  background: rgba(30, 30, 40, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* تحسينات للهواتف */
+@media (max-width: 768px) {
+  .qr-modal-wrapper {
+    padding: 10px;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .qr-login-modal {
+    max-width: 95%;
+    max-height: 80vh;
+    margin: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .qr-modal-wrapper {
+    padding: 5px;
+  }
+  
+  .qr-login-modal {
+    max-width: 100%;
+    border-radius: 16px;
+  }
+}
+
+/* تحسينات للأجهزة الطويلة */
+@media (max-height: 700px) {
+  .qr-login-modal {
+    max-height: 90vh;
+    max-width: 380px;
+  }
+  
+  .qr-login-content {
+    max-height: calc(90vh - 120px);
+  }
+}
+
+/* تأكد من أن النافذة تظهر فوق كل شيء */
+.qr-login-overlay {
+  z-index: 2000;
+}
+
+.qr-modal-wrapper {
+  z-index: 2001;
+}
+
+/* تحسينات التمرير للمحتوى الطويل */
+.qr-login-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  max-height: calc(85vh - 80px);
+}
+
+/* تحسينات الحركة */
+.qr-login-modal {
+  transform-origin: center center;
+}
+/* ====== 🆕 أنماط قسم QR الجديد ====== */
+
+.qr-section-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  z-index: 100;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.dark .qr-section-container {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+}
+
+/* هيدر قسم QR */
+.qr-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.back-to-login-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.back-to-login-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateX(-5px);
+}
+
+.qr-section-header h3 {
+  color: white;
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+/* محتوى قسم QR */
+.qr-section-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+
+.qr-main-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  width: 100%;
+  max-width: 1000px;
+  align-items: start;
+}
+
+/* قسم صورة QR */
+.qr-image-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.qr-image-wrapper {
+  background: white;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.qr-code-image {
+  width: 280px;
+  height: 280px;
+  border-radius: 10px;
+}
+
+.scan-success-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(16, 185, 129, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  font-size: 4rem;
+  color: white;
+}
+
+/* قسم حالة QR */
+.qr-status-section {
+  width: 100%;
+  max-width: 320px;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+  margin-bottom: 1.5rem;
+}
+
+.status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.status-indicator.waiting .status-dot {
+  background: #f59e0b;
+}
+
+.status-indicator.scanned .status-dot {
+  background: #3b82f6;
+}
+
+.status-indicator.confirmed .status-dot,
+.status-indicator.redirecting .status-dot {
+  background: #10b981;
+  animation: pulse 0.5s infinite;
+}
+
+.status-indicator.error .status-dot {
+  background: #ef4444;
+}
+
+.status-text {
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.progress-indicator {
+  width: 100%;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981, #34d399);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+/* قسم المعلومات */
+.qr-info-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.instructions-card,
+.session-info-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  padding: 2rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.instructions-card h4,
+.session-info-card h5 {
+  color: white;
+  margin: 0 0 1rem 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.instructions-card ol {
+  color: rgba(255, 255, 255, 0.9);
+  padding-left: 1.5rem;
+  margin: 0;
+}
+
+.instructions-card li {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  opacity: 0.7;
+}
+
+.instructions-card li.active-step {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.15);
+  font-weight: 600;
+  color: white;
+}
+
+.instructions-card li:last-child {
+  margin-bottom: 0;
+}
+
+/* معلومات الجلسة */
+.session-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.session-field {
+  display: flex;
+  justify-content: between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.session-field span {
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 600;
+}
+
+.session-field code {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-family: 'Monaco', 'Consolas', monospace;
+  color: white;
+  flex: 1;
+}
+
+.session-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.action-btn {
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.action-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.action-btn.primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+}
+
+.action-btn.primary:hover {
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* رسائل الحالة */
+.success-message,
+.error-message {
+  padding: 2rem;
+  border-radius: 15px;
+  text-align: center;
+}
+
+.success-message {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.error-message {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.success-icon,
+.error-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.success-message h4 {
+  color: #34d399;
+  margin: 0 0 0.5rem 0;
+}
+
+.error-message h4 {
+  color: #f87171;
+  margin: 0 0 0.5rem 0;
+}
+
+.success-message p,
+.error-message p {
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0 0 1.5rem 0;
+}
+
+.retry-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.retry-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* الحالة الأولية */
+.qr-init-state {
+  text-align: center;
+  padding: 3rem 2rem;
+}
+
+.qr-init-icon {
+  font-size: 5rem;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+}
+
+.qr-init-state h4 {
+  color: white;
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.qr-init-state p {
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0 0 2rem 0;
+  font-size: 1.1rem;
+}
+
+.generate-qr-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 1.25rem 2.5rem;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 25px rgba(102, 126, 234, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin: 0 auto;
+}
+
+.generate-qr-btn:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4);
+}
+
+.generate-qr-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* ====== 📱 تحسينات للهواتف ====== */
+@media (max-width: 768px) {
+  .qr-section-container {
+    padding: 1rem;
+  }
+  
+  .qr-section-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .back-to-login-btn {
+    align-self: flex-start;
+  }
+  
+  .qr-main-content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .qr-image-wrapper {
+    padding: 1.5rem;
+  }
+  
+  .qr-code-image {
+    width: 220px;
+    height: 220px;
+  }
+  
+  .instructions-card,
+  .session-info-card {
+    padding: 1.5rem;
+  }
+  
+  .session-details {
+    gap: 1rem;
+  }
+  
+  .session-field {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .session-actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+  
+  .action-btn {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .qr-section-container {
+    padding: 0.5rem;
+  }
+  
+  .qr-code-image {
+    width: 200px;
+    height: 200px;
+  }
+  
+  .qr-init-state {
+    padding: 2rem 1rem;
+  }
+  
+  .qr-init-icon {
+    font-size: 4rem;
+  }
 }

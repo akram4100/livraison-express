@@ -182,7 +182,7 @@ const Register = ({ globalDarkMode, updateGlobalDarkMode }) => {
   const roleAnimations = {
     client: { icon: "📦", color: "#4fc3f7", description: t("Order deliveries and track your packages") },
     livreur: { icon: "🚚", color: "#ffa726", description: t("Make deliveries and earn money") },
-    partenaire: { icon: "🤝", color: "#66bb6a", description: t("Collaborate with our platform")}
+    partner: { icon: "🤝", color: "#66bb6a", description: t("Collaborate with our platform")}
   };
 
   return (
@@ -473,7 +473,7 @@ const Register = ({ globalDarkMode, updateGlobalDarkMode }) => {
                           <option value="livreur" style={{ color: '#333', backgroundColor: '#fff' }}>
                             🚚 {t("delivery_person") || "Delivery Person"}
                           </option>
-                          <option value="partenaire" style={{ color: '#333', backgroundColor: '#fff' }}>
+                          <option value="partner" style={{ color: '#333', backgroundColor: '#fff' }}>
                             🤝 {t("partner") || "Partner"}
                           </option>
                         </motion.select>
@@ -495,7 +495,7 @@ const Register = ({ globalDarkMode, updateGlobalDarkMode }) => {
                           <span className="role-title">
                             {formData.role === "client" && (t("client") || "Client")}
                             {formData.role === "livreur" && (t("delivery_person") || "Delivery Person")}
-                            {formData.role === "partenaire" && (t("partner") || "Partner")}
+                            {formData.role === "partner" && (t("partner") || "Partner")}
                           </span>
                         </div>
                         <p className="role-description-text">
