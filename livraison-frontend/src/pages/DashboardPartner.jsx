@@ -805,11 +805,15 @@ export default function DashboardPartner() {
   };
   // في DashboardPartner.jsx - أضف هذه الوظائف
 
-  // 🎯 دالة جلب المتاجر من API
+  // 🎯 دالة جلب المتاجر من API - معدلة
   const fetchStores = async () => {
     try {
+      console.log('🔍 Fetching stores for partner:', user.email);
+
       const response = await fetch(
-        `https://livraison-api-x45n.onrender.com/api/partner/stores?owner_email=${user.email}`,
+        `https://livraison-api-x45n.onrender.com/api/partner/stores?owner_email=${encodeURIComponent(
+          user.email
+        )}`,
         {
           method: 'GET',
           headers: {
@@ -818,15 +822,66 @@ export default function DashboardPartner() {
         }
       );
 
+      // تحقق من حالة الاستجابة
+      if (!response.ok) {
+        // إذا كانت 404، قد تكون نقطة النهاية غير موجودة بعد
+        if (response.status === 404) {
+          console.warn('⚠️ Stores endpoint not found, showing sample stores');
+          setStores([
+            {
+              id: 'store_001',
+              name: 'مطعم الندى',
+              category: 'مطعم',
+              description: 'أفضل المأكولات التقليدية',
+              address: 'شارع الرياض، حي النخيل',
+              phone: '0551234567',
+              email: user.email,
+              status: 'active',
+              logo: 'https://via.placeholder.com/200/FF6B6B/FFFFFF?text=الندى',
+              banner:
+                'https://via.placeholder.com/1200x400/4ECDC4/FFFFFF?text=مطعم+الندى',
+              orders: 156,
+              revenue: '45,000 د.ج',
+              rating: 4.5,
+              owner_email: user.email,
+            },
+          ]);
+          return;
+        }
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const data = await response.json();
 
       if (data.success) {
+        console.log(`✅ تم جلب ${data.stores.length} متجر`);
         setStores(data.stores);
       } else {
-        console.error('❌ Error fetching stores:', data.message);
+        console.log('📭 لا توجد متاجر:', data.message);
+        setStores([]);
       }
     } catch (error) {
       console.error('❌ Network error fetching stores:', error);
+      // العرض الافتراضي للاختبار
+      setStores([
+        {
+          id: 'store_001',
+          name: 'مطعم الندى',
+          category: 'مطعم',
+          description: 'أفضل المأكولات التقليدية',
+          address: 'شارع الرياض، حي النخيل',
+          phone: '0551234567',
+          email: user.email,
+          status: 'active',
+          logo: 'https://via.placeholder.com/200/FF6B6B/FFFFFF?text=الندى',
+          banner:
+            'https://via.placeholder.com/1200x400/4ECDC4/FFFFFF?text=مطعم+الندى',
+          orders: 156,
+          revenue: '45,000 د.ج',
+          rating: 4.5,
+          owner_email: user.email,
+        },
+      ]);
     }
   };
 
