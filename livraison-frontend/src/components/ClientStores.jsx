@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
+import API_CONFIG from '../config/apiConfig';
 
 const ClientStores = () => {
   const { t } = useTranslation();
@@ -10,6 +11,7 @@ const ClientStores = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStore, setSelectedStore] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // بيانات عينة من المتاجر
   const sampleStores = [
@@ -140,14 +142,55 @@ const ClientStores = () => {
   ];
 
   useEffect(() => {
-    // محاكاة تحميل المتاجر
-    setLoading(true);
-    setTimeout(() => {
+    fetchStores();
+  }, []);
+
+  // دالة لجلب المتاجر من قاعدة البيانات
+  const fetchStores = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // محاولة جلب من API الحقيقي
+      const baseURL = API_CONFIG.BASE_URL || 'http://localhost:8080/api';
+      const response = await fetch(`${baseURL}/stores`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        const storesData = data.stores || [];
+        
+        if (storesData.length > 0) {
+          console.log('✅ تم جلب المتاجر من قاعدة البيانات:', storesData);
+          setStores(storesData);
+          setFilteredStores(storesData);
+        } else {
+          // استخدام البيانات العينة إذا كانت قاعدة البيانات فارغة
+          console.log('⚠️ قاعدة البيانات فارغة، استخدام بيانات عينة');
+          setStores(sampleStores);
+          setFilteredStores(sampleStores);
+        }
+      } else {
+        // استخدام البيانات العينة عند فشل الاتصال
+        console.log('⚠️ فشل الاتصال بالسيرفر، استخدام بيانات عينة');
+        setStores(sampleStores);
+        setFilteredStores(sampleStores);
+      }
+    } catch (err) {
+      console.error('❌ خطأ في جلب المتاجر:', err);
+      setError(err.message);
+      // استخدام البيانات العينة عند حدوث خطأ
       setStores(sampleStores);
       setFilteredStores(sampleStores);
+    } finally {
       setLoading(false);
-    }, 500);
-  }, []);
+    }
+  };
 
   useEffect(() => {
     filterStores();
