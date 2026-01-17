@@ -215,7 +215,41 @@ export default function DashboardClient() {
         setRecentActivity(prev => [newActivity, ...prev.slice(0, 4)]);
       }
     }
+
+    // 🔥 جلب المتاجر عند الذهاب إلى قسم المتاجر
+    if (activeSection === 'stores') {
+      fetchAllStores();
+    }
   }, [activeSection, t, i18n.language]);
+
+  // 🏪 دالة جلب المتاجر من الـ API
+  const fetchAllStores = async () => {
+    try {
+      console.log('🏪 جاري جلب المتاجر من الـ API...');
+      
+      const baseURL = localStorage.getItem('apiUrl') || 'http://localhost:8080';
+      const response = await fetch(`${baseURL}/api/client/stores`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(`✅ تم جلب ${data.stores?.length || 0} متجر`);
+        if (data.stores && data.stores.length > 0) {
+          setStores(data.stores);
+          console.log('✅✅ تم تحديث المتاجر بنجاح!');
+        }
+      } else {
+        console.warn('⚠️ فشل جلب المتاجر من السيرفر');
+      }
+    } catch (error) {
+      console.error('❌ خطأ في جلب المتاجر:', error);
+    }
+  };
 
   // 🌍 تغيير اللغة
   const changeLanguage = lang => {
@@ -1320,7 +1354,7 @@ export default function DashboardClient() {
           )}
 
           {/* أقسام أخرى */}
-          {activeSection === 'stores' && <ClientStores />}
+          {activeSection === 'stores' && <ClientStores stores={stores} />}
 
           {activeSection === 'orders' && <ClientOrders />}
 

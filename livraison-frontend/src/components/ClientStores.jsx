@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import API_CONFIG from '../config/apiConfig';
 
-const ClientStores = () => {
+const ClientStores = ({ stores: propsStores }) => {
   const { t } = useTranslation();
   const [stores, setStores] = useState([]);
   const [filteredStores, setFilteredStores] = useState([]);
@@ -12,8 +11,9 @@ const ClientStores = () => {
   const [selectedStore, setSelectedStore] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [apiUrl, setApiUrl] = useState('');
 
-  // بيانات عينة من المتاجر
+  // بيانات عينة من المتاجر (للاستخدام كـ fallback فقط)
   const sampleStores = [
     {
       id: 'store_001',
@@ -141,56 +141,69 @@ const ClientStores = () => {
     { id: 'healthy', label: 'صحي', icon: '🥗' },
   ];
 
+  // 🔥 جلب المتاجر من API عند تحميل المكون
   useEffect(() => {
-    fetchStores();
+    fetchStoresFromAPI();
   }, []);
 
-  // دالة لجلب المتاجر من قاعدة البيانات
-  const fetchStores = async () => {
+  // دالة جلب المتاجر من السيرفر (Firebase)
+  const fetchStoresFromAPI = async () => {
     try {
       setLoading(true);
       setError(null);
-      
-      // محاولة جلب من API الحقيقي
-      const baseURL = API_CONFIG.BASE_URL || 'http://localhost:8080/api';
-      const response = await fetch(`${baseURL}/stores`, {
+
+      // تحديد URL السيرفر
+      const baseURL = localStorage.getItem('apiUrl') || 'http://localhost:8080';
+      setApiUrl(baseURL);
+
+      console.log(`🔥 جاري جلب المتاجر من: ${baseURL}/api/client/stores`);
+
+      const response = await fetch(`${baseURL}/api/client/stores`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
       });
-      
+
+      console.log(`📡 رد السيرفر: ${response.status}`);
+
       if (response.ok) {
         const data = await response.json();
-        const storesData = data.stores || [];
+        console.log(`✅ تم جلب ${data.stores?.length || 0} متجر من Firebase`);
         
-        if (storesData.length > 0) {
-          console.log('✅ تم جلب المتاجر من قاعدة البيانات:', storesData);
-          setStores(storesData);
-          setFilteredStores(storesData);
+        if (data.stores && data.stores.length > 0) {
+          setStores(data.stores);
+          setFilteredStores(data.stores);
+          console.log('✅✅ تم تحميل المتاجر من قاعدة البيانات بنجاح!');
         } else {
-          // استخدام البيانات العينة إذا كانت قاعدة البيانات فارغة
-          console.log('⚠️ قاعدة البيانات فارغة، استخدام بيانات عينة');
+          console.warn('⚠️ لا توجد متاجر في قاعدة البيانات');
           setStores(sampleStores);
           setFilteredStores(sampleStores);
         }
       } else {
-        // استخدام البيانات العينة عند فشل الاتصال
-        console.log('⚠️ فشل الاتصال بالسيرفر، استخدام بيانات عينة');
+        console.warn(`⚠️ فشل الاتصال بالسيرفر: ${response.status}`);
         setStores(sampleStores);
         setFilteredStores(sampleStores);
       }
     } catch (err) {
       console.error('❌ خطأ في جلب المتاجر:', err);
       setError(err.message);
-      // استخدام البيانات العينة عند حدوث خطأ
+      // استخدام البيانات العينة كـ fallback
       setStores(sampleStores);
       setFilteredStores(sampleStores);
     } finally {
       setLoading(false);
     }
   };
+
+  // إذا تم تمرير stores من الخارج (props)، استخدمها
+  useEffect(() => {
+    if (propsStores && propsStores.length > 0) {
+      setStores(propsStores);
+      setFilteredStores(propsStores);
+    }
+  }, [propsStores]);
 
   useEffect(() => {
     filterStores();
