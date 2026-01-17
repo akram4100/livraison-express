@@ -4,6 +4,15 @@ import { QrReader } from 'react-qr-reader';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import '../style/dashboardPartner.css';
+import '../style/partner-profile.css';
+import '../style/partner-settings.css';
+import '../style/partner-reports.css';
+import '../style/partner-support.css';
+import StoreProductsManagementRedesigned from '../components/StoreProductsManagement-Redesigned';
+import PartnerProfile from '../components/PartnerProfile';
+import PartnerSettings from '../components/PartnerSettings';
+import PartnerReports from '../components/PartnerReports';
+import PartnerSupport from '../components/PartnerSupport';
 
 export default function DashboardPartner() {
   const [user, setUser] = useState(null);
@@ -25,6 +34,7 @@ export default function DashboardPartner() {
   const [recentActivity, setRecentActivity] = useState([]);
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
+  const [editingProduct, setEditingProduct] = useState(null);
   const [storeFormData, setStoreFormData] = useState({
     name: '',
     description: '',
@@ -135,7 +145,18 @@ export default function DashboardPartner() {
   const [storeFilter, setStoreFilter] = useState('all');
   const [formSuccess, setFormSuccess] = useState(false);
   const [isCreatingStore, setIsCreatingStore] = useState(false);
-
+  // في useState إضافة:
+  const [products, setProducts] = useState([]);
+  const [currentStore, setCurrentStore] = useState(null);
+  const [storeViewMode, setStoreViewMode] = useState('customer');
+  const [productFormData, setProductFormData] = useState({
+    name: '',
+    description: '',
+    price: '',
+    category: '',
+    image: null,
+    available: true,
+  });
   // 🎯 كشف نوع الجهاز
   useEffect(() => {
     const checkDevice = () => {
@@ -224,7 +245,6 @@ export default function DashboardPartner() {
   };
 
   const getCurrentTime = () => {
-    const now = new Date();
     if (i18n.language === 'ar') return 'الآن';
     if (i18n.language === 'fr') return 'Maintenant';
     return 'Just now';
@@ -805,115 +825,113 @@ export default function DashboardPartner() {
   };
   // في DashboardPartner.jsx - أضف هذه الوظائف
 
-  // 🎯 دالة جلب المتاجر من API - معدلة
+  // 🎯 دالة جلب المتاجر الحقيقية من Firebase
   const fetchStores = async () => {
     try {
-      console.log('🔍 Fetching stores for partner:', user.email);
+      console.log('🔍 Fetching REAL stores for partner:', user.email);
 
       const response = await fetch(
-        `https://livraison-api-x45n.onrender.com/api/partner/stores?owner_email=${encodeURIComponent(
+        `https://livraison-api-x45n.onrender.com/api/partner/stores-real?owner_email=${encodeURIComponent(
           user.email
         )}`,
         {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
+            Accept: 'application/json',
           },
+          mode: 'cors',
         }
       );
 
       // تحقق من حالة الاستجابة
       if (!response.ok) {
-        // إذا كانت 404، قد تكون نقطة النهاية غير موجودة بعد
-        if (response.status === 404) {
-          console.warn('⚠️ Stores endpoint not found, showing sample stores');
-          setStores([
-            {
-              id: 'store_001',
-              name: 'مطعم الندى',
-              category: 'مطعم',
-              description: 'أفضل المأكولات التقليدية',
-              address: 'شارع الرياض، حي النخيل',
-              phone: '0551234567',
-              email: user.email,
-              status: 'active',
-              logo: 'https://via.placeholder.com/200/FF6B6B/FFFFFF?text=الندى',
-              banner:
-                'https://via.placeholder.com/1200x400/4ECDC4/FFFFFF?text=مطعم+الندى',
-              orders: 156,
-              revenue: '45,000 د.ج',
-              rating: 4.5,
-              owner_email: user.email,
-            },
-          ]);
-          return;
-        }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
 
       if (data.success) {
-        console.log(`✅ تم جلب ${data.stores.length} متجر`);
-        setStores(data.stores);
+        console.log(`✅ تم جلب ${data.stores.length} متجر من Firebase`);
+
+        // تحديث المتاجر مع روابط صور فعلية
+        const updatedStores = data.stores.map(store => ({
+          ...store,
+          logo:
+            store.logo_url ||
+            'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&h=200&fit=crop',
+          banner:
+            store.banner_url ||
+            'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=1200&h=400&fit=crop',
+          orders: store.stats?.total_orders || 0,
+          revenue: `${(store.stats?.total_revenue || 0).toLocaleString()} د.ج`,
+          rating: store.stats?.average_rating || 0,
+          status: store.status || 'active',
+        }));
+
+        setStores(updatedStores);
       } else {
         console.log('📭 لا توجد متاجر:', data.message);
         setStores([]);
       }
     } catch (error) {
       console.error('❌ Network error fetching stores:', error);
-      // العرض الافتراضي للاختبار
+      // خيار الطوارئ: استخدام بيانات تجريبية محلية
       setStores([
         {
-          id: 'store_001',
-          name: 'مطعم الندى',
+          id: 'store_local_001',
+          name: 'متجر تجريبي',
           category: 'مطعم',
-          description: 'أفضل المأكولات التقليدية',
-          address: 'شارع الرياض، حي النخيل',
-          phone: '0551234567',
+          description: 'متجر تجريبي للاختبار',
+          address: 'عنوان تجريبي',
+          phone: '0550000000',
           email: user.email,
           status: 'active',
-          logo: 'https://via.placeholder.com/200/FF6B6B/FFFFFF?text=الندى',
+          logo: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&h=200&fit=crop',
           banner:
-            'https://via.placeholder.com/1200x400/4ECDC4/FFFFFF?text=مطعم+الندى',
-          orders: 156,
-          revenue: '45,000 د.ج',
-          rating: 4.5,
+            'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=1200&h=400&fit=crop',
+          orders: 10,
+          revenue: '5,000 د.ج',
+          rating: 4.0,
           owner_email: user.email,
         },
       ]);
     }
   };
 
-  // 🎯 دالة إنشاء متجر عبر API
+  // 🎯 دالة إنشاء متجر حقيقي في Firebase
   const handleCreateStore = async e => {
     e.preventDefault();
 
     try {
-      console.log('🚀 Creating new store via API:', storeFormData);
+      console.log('🚀 Creating new store in Firebase:', storeFormData);
 
       // تحضير بيانات المتجر
       const storeData = {
         name: storeFormData.name,
-        description: storeFormData.description,
+        description: storeFormData.description || 'وصف المتجر',
         category: storeFormData.category,
         address: storeFormData.address,
-        phone: storeFormData.phone,
-        email: storeFormData.email,
+        phone: storeFormData.phone || '',
+        email: storeFormData.email || user.email,
         owner_id: user.id || user.email,
         owner_email: user.email,
-        logo_url: storeFormData.logo || 'https://via.placeholder.com/200',
+        logo_url:
+          storeFormData.logo ||
+          'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&h=200&fit=crop',
         banner_url:
-          storeFormData.banner || 'https://via.placeholder.com/1200x400',
+          storeFormData.banner ||
+          'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=1200&h=400&fit=crop',
       };
 
-      // استدعاء API
+      // استدعاء API الحقيقي
       const response = await fetch(
-        'https://livraison-api-x45n.onrender.com/api/partner/stores/create',
+        'https://livraison-api-x45n.onrender.com/api/partner/stores-create-real',
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            Accept: 'application/json',
           },
           body: JSON.stringify(storeData),
         }
@@ -932,6 +950,8 @@ export default function DashboardPartner() {
           orders: 0,
           revenue: '0 د.ج',
           rating: 0,
+          logo: storeData.logo_url,
+          banner: storeData.banner_url,
         };
 
         setStores(prev => [newStore, ...prev]);
@@ -949,6 +969,7 @@ export default function DashboardPartner() {
             banner: null,
           });
           setIsCreatingStore(false);
+          setFormSuccess(false);
         }, 2000);
 
         // تحديث النشاط
@@ -960,15 +981,15 @@ export default function DashboardPartner() {
         setRecentActivity(prev => [newActivity, ...prev.slice(0, 4)]);
       } else {
         console.error('❌ API error:', data.message);
-        setScanResult(t('store_creation_failed') + ': ' + data.message);
+        alert(t('store_creation_failed') + ': ' + data.message);
       }
     } catch (error) {
       console.error('❌ Network error creating store:', error);
-      setScanResult(t('store_creation_failed') + ': ' + error.message);
+      alert(t('store_creation_failed') + ': ' + error.message);
     }
   };
 
-  // 🎯 دالة حذف متجر عبر API
+  // 🎯 دالة حذف متجر حقيقي من Firebase
   const handleDeleteStore = async storeId => {
     if (window.confirm(t('confirm_delete_store'))) {
       try {
@@ -988,6 +1009,12 @@ export default function DashboardPartner() {
           // تحديث القائمة محلياً
           setStores(prev => prev.filter(store => store.id !== storeId));
 
+          // إذا كان المتجر المحذوف هو الحالي، ارجع للقائمة
+          if (currentStore?.id === storeId) {
+            setCurrentStore(null);
+            setStoreViewMode('customer');
+          }
+
           const newActivity = {
             icon: '🗑️',
             message: t('store_deleted_successfully'),
@@ -1003,7 +1030,207 @@ export default function DashboardPartner() {
       }
     }
   };
+  // 🎯 دالة عرض المتجر كما يراه الزبون
+  const viewStoreAsCustomer = store => {
+    setCurrentStore(store);
+    setStoreViewMode('customer');
 
+    // محاكاة تحميل منتجات المتجر
+    loadStoreProducts(store.id);
+
+    const newActivity = {
+      icon: '👁️',
+      message: `عرض متجر: ${store.name}`,
+      time: getCurrentTime(),
+    };
+    setRecentActivity(prev => [newActivity, ...prev.slice(0, 4)]);
+  };
+  // 🎯 دالة إدارة منتجات المتجر
+  const manageStoreProducts = store => {
+    setCurrentStore(store);
+    setStoreViewMode('products');
+    setProductFormData({
+      name: '',
+      description: '',
+      price: '',
+      category: '',
+      image: null,
+      available: true,
+    });
+
+    // تحميل المنتجات الحالية
+    loadStoreProducts(store.id);
+
+    const newActivity = {
+      icon: '📦',
+      message: `إدارة منتجات: ${store.name}`,
+      time: getCurrentTime(),
+    };
+    setRecentActivity(prev => [newActivity, ...prev.slice(0, 4)]);
+  };
+  // 🎯 دالة تحميل منتجات المتجر الحقيقية من Firebase
+  const loadStoreProducts = async storeId => {
+    try {
+      console.log(`🛒 Loading REAL products for store: ${storeId}`);
+
+      const response = await fetch(
+        `https://livraison-api-x45n.onrender.com/api/stores/${storeId}/products`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
+        console.log(`✅ Loaded ${data.products.length} products from Firebase`);
+
+        // تحويل الصيغة لتناسب العرض
+        const formattedProducts = data.products.map(product => ({
+          id: product.id,
+          name: product.name,
+          description: product.description,
+          price: product.price,
+          category: product.category,
+          image: product.image_url,
+          available: product.available,
+          rating: product.rating || 0,
+          total_orders: product.total_orders || 0,
+          ingredients: product.ingredients || [],
+          preparation_time: product.preparation_time || 15,
+        }));
+
+        setProducts(formattedProducts);
+      } else {
+        console.error('❌ API error:', data.message);
+        setProducts([]);
+      }
+    } catch (error) {
+      console.error('❌ Error loading products:', error);
+      setProducts([]);
+    }
+  };
+  // 🎯 دالة إضافة منتج جديد إلى Firebase
+  const handleAddProduct = async e => {
+    e.preventDefault();
+
+    if (!currentStore) return;
+
+    try {
+      const productData = {
+        name: productFormData.name,
+        description: productFormData.description || '',
+        price: parseFloat(productFormData.price),
+        category: productFormData.category,
+        image_url:
+          productFormData.image ||
+          'https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=400&h=300&fit=crop&crop=center',
+        available: productFormData.available,
+        rating: 0,
+        total_orders: 0,
+        ingredients: [],
+        preparation_time: 15,
+      };
+
+      console.log('🚀 Adding product to Firebase:', productData);
+
+      const response = await fetch(
+        `https://livraison-api-x45n.onrender.com/api/stores/${currentStore.id}/products`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify(productData),
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        // إضافة المنتج الجديد للقائمة
+        const newProduct = {
+          id: data.product_id,
+          ...productData,
+          image: productData.image_url,
+          rating: 0,
+        };
+
+        setProducts(prev => [...prev, newProduct]);
+
+        // إعادة تعيين النموذج
+        setProductFormData({
+          name: '',
+          description: '',
+          price: '',
+          category: '',
+          image: null,
+          available: true,
+        });
+
+        const newActivity = {
+          icon: '➕',
+          message: `تم إضافة منتج: ${newProduct.name}`,
+          time: getCurrentTime(),
+        };
+        setRecentActivity(prev => [newActivity, ...prev.slice(0, 4)]);
+
+        alert('✅ تم إضافة المنتج بنجاح إلى Firebase!');
+      } else {
+        console.error('❌ API error:', data.message);
+        alert('❌ خطأ في إضافة المنتج: ' + data.message);
+      }
+    } catch (error) {
+      console.error('❌ Error adding product:', error);
+      alert('❌ خطأ في إضافة المنتج: ' + error.message);
+    }
+  };
+  // 🎯 دالة حذف منتج من Firebase
+  const handleDeleteProduct = async productId => {
+    if (!currentStore || !window.confirm('هل تريد حذف هذا المنتج؟')) return;
+
+    try {
+      const response = await fetch(
+        `https://livraison-api-x45n.onrender.com/api/stores/${currentStore.id}/products/${productId}?user_email=${user.email}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        // تحديث القائمة محلياً
+        setProducts(prev => prev.filter(p => p.id !== productId));
+
+        const newActivity = {
+          icon: '🗑️',
+          message: 'تم حذف منتج من Firebase',
+          time: getCurrentTime(),
+        };
+        setRecentActivity(prev => [newActivity, ...prev.slice(0, 4)]);
+
+        alert('✅ تم حذف المنتج بنجاح من Firebase!');
+      } else {
+        alert('❌ ' + data.message);
+      }
+    } catch (error) {
+      console.error('❌ Error deleting product:', error);
+      alert('❌ خطأ في حذف المنتج');
+    }
+  };
   // دالة العودة لقائمة المتاجر
   const backToStoresList = () => {
     setIsCreatingStore(false);
@@ -1011,37 +1238,843 @@ export default function DashboardPartner() {
     setFormSuccess(false);
   };
 
-  // في DashboardPartner.jsx - تعديل دالة تحميل الصور
-  const handleImageUpload = async (type, event) => {
+  // 🎯 دالة تحديث المنتج بالكامل
+
+  // 🎯 دالة تحميل صورة من التخزين المحلي
+  const handleImageUpload = event => {
     const file = event.target.files[0];
     if (file) {
+      // التحقق من نوع الملف
+      if (!file.type.startsWith('image/')) {
+        alert('❌ الرجاء اختيار ملف صورة فقط');
+        return;
+      }
+
+      // التحقق من حجم الملف (5MB كحد أقصى)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('❌ حجم الصورة كبير جداً (الحد الأقصى 5MB)');
+        return;
+      }
+
       const reader = new FileReader();
-      reader.onloadend = async () => {
-        const base64Image = reader.result.split(',')[1]; // إزالة data:image/png;base64,
-
-        // حفظ الصورة مؤقتاً في النموذج
-        setStoreFormData(prev => ({
+      reader.onloadend = () => {
+        // حفظ الصورة في النموذج
+        setProductFormData(prev => ({
           ...prev,
-          [type]: reader.result,
+          image: reader.result,
         }));
-
-        // إذا كان هناك storeId (في حالة التحديث)
-        if (storeFormData.id) {
-          const result = await storeService.uploadImage(
-            storeFormData.id,
-            type,
-            base64Image
-          );
-
-          if (result.success) {
-            console.log(`✅ ${type} uploaded to server`);
-          }
-        }
       };
       reader.readAsDataURL(file);
     }
   };
 
+  // 🎯 دالة تحميل صورة من Unsplash (خيار بديل)
+
+  // 🎯 دالة تحميل صورة من Firebase Storage (إن كان متوفراً)
+
+  // 🎯 دالة تحميل صورة من رابط مباشر
+
+  // 🎯 دالة لتحميل بيانات المنتج للتعديل
+
+  // 🎯 دالة إلغاء التعديل
+  // 🎯 مكون عرض المتجر للزبون
+  const StoreCustomerView = () => {
+    if (!currentStore) return null;
+
+    return (
+      <div className="store-customer-view">
+        <div className="section-header">
+          <button
+            className="action-btn secondary small"
+            onClick={() => {
+              setCurrentStore(null);
+              setStoreViewMode('customer');
+            }}
+            style={{ marginBottom: '1rem' }}
+          >
+            ↩️ {t('back_to_stores')}
+          </button>
+          <h2>🛍️ {currentStore.name}</h2>
+          <p>{t('store_customer_view_description')}</p>
+        </div>
+
+        {/* بانر المتجر */}
+        <div className="store-banner-large">
+          <img src={currentStore.banner} alt={currentStore.name} />
+          <div className="store-banner-overlay">
+            <div className="store-logo-large">
+              <img src={currentStore.logo} alt={currentStore.name} />
+            </div>
+            <div className="store-info-large">
+              <h1>{currentStore.name}</h1>
+              <div className="store-rating">
+                ⭐ {currentStore.rating} ({currentStore.orders} طلب)
+              </div>
+              <div className="store-category">📂 {currentStore.category}</div>
+              <div className="store-address">📍 {currentStore.address}</div>
+            </div>
+          </div>
+        </div>
+
+        {/* معلومات المتجر */}
+        <div className="store-details-section">
+          <h3>📝 {t('about_store')}</h3>
+          <p>{currentStore.description}</p>
+
+          <div className="store-info-grid">
+            <div className="info-card">
+              <div className="info-icon">📞</div>
+              <div className="info-content">
+                <h4>{t('contact')}</h4>
+                <p>{currentStore.phone}</p>
+              </div>
+            </div>
+
+            <div className="info-card">
+              <div className="info-icon">⏰</div>
+              <div className="info-content">
+                <h4>{t('working_hours')}</h4>
+                <p>يومياً: 9:00 ص - 12:00 م</p>
+              </div>
+            </div>
+
+            <div className="info-card">
+              <div className="info-icon">💰</div>
+              <div className="info-content">
+                <h4>{t('delivery_fee')}</h4>
+                <p>200 د.ج</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* منتجات المتجر */}
+        <div className="store-products-section">
+          <h3>🍽️ {t('menu')}</h3>
+
+          {products.length > 0 ? (
+            <div className="products-grid">
+              {products.map(product => (
+                <div key={product.id} className="product-card">
+                  <div className="product-image">
+                    <img src={product.image} alt={product.name} />
+                    {!product.available && (
+                      <div className="product-unavailable">⏸️ غير متوفر</div>
+                    )}
+                  </div>
+                  <div className="product-info">
+                    <div className="product-header">
+                      <h4>{product.name}</h4>
+                      <span className="product-price">
+                        {product.price.toLocaleString()} د.ج
+                      </span>
+                    </div>
+                    <p className="product-description">{product.description}</p>
+                    <div className="product-footer">
+                      <span className="product-category">
+                        #{product.category}
+                      </span>
+                      <span className="product-rating">
+                        ⭐ {product.rating}
+                      </span>
+                    </div>
+                    <button className="add-to-cart-btn">
+                      🛒 {t('add_to_cart')}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="no-products">
+              <div className="no-products-icon">📭</div>
+              <p>{t('no_products_available')}</p>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+  // 🎯 دالة تحميل صورة من Unsplash (خيار بديل)
+  const handleUnsplashImage = async () => {
+    try {
+      if (!productFormData.category) {
+        alert('❌ الرجاء اختيار فئة المنتج أولاً');
+        return;
+      }
+
+      const categoryMap = {
+        'أطباق رئيسية': 'food',
+        مقبلات: 'appetizer',
+        مشروبات: 'drink',
+        حلويات: 'dessert',
+        'وجبات سريعة': 'fastfood',
+      };
+
+      const searchTerm =
+        categoryMap[productFormData.category] ||
+        productFormData.category.toLowerCase();
+
+      // استخدام Unsplash API (تستبدل YOUR_ACCESS_KEY بمفتاحك الخاص إذا كان لديك)
+      const response = await fetch(
+        `https://api.unsplash.com/photos/random?query=${searchTerm}&client_id=YOUR_ACCESS_KEY&orientation=landscape`
+      );
+
+      if (!response.ok) {
+        throw new Error('فشل في جلب الصورة من Unsplash');
+      }
+
+      const data = await response.json();
+      const imageUrl = data.urls.regular;
+
+      setProductFormData(prev => ({
+        ...prev,
+        image: imageUrl,
+      }));
+
+      console.log('✅ تم تحميل صورة من Unsplash:', imageUrl);
+    } catch (error) {
+      console.error('❌ خطأ في جلب صورة من Unsplash:', error);
+
+      // استخدم صورة بديلة من placeholder
+      const fallbackImages = {
+        'أطباق رئيسية':
+          'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&h=600&fit=crop',
+        مقبلات:
+          'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w-800&h=600&fit=crop',
+        مشروبات:
+          'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=800&h=600&fit=crop',
+        حلويات:
+          'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=800&h=600&fit=crop',
+        'وجبات سريعة':
+          'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800&h=600&fit=crop',
+      };
+
+      const fallbackUrl =
+        fallbackImages[productFormData.category] ||
+        'https://images.unsplash.com/photo-1574484284002-952d92456975?w=800&h=600&fit=crop';
+
+      setProductFormData(prev => ({
+        ...prev,
+        image: fallbackUrl,
+      }));
+
+      alert('⚠️ استخدام صورة تجريبية (Unsplash API محدودة)');
+    }
+  };
+
+  // 🎯 دالة تحميل صورة من رابط مباشر
+  const handleImageUrl = () => {
+    const url = prompt(
+      '🖼️ أدخل رابط الصورة:',
+      'https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=400&h=300&fit=crop'
+    );
+    if (url) {
+      setProductFormData(prev => ({
+        ...prev,
+        image: url,
+      }));
+    }
+  };
+  // 🎯 دالة تحديث منتج حقيقي في Firebase
+  const handleUpdateProduct = async e => {
+    e.preventDefault();
+
+    if (!currentStore || !editingProduct) return;
+
+    try {
+      const productData = {
+        name: productFormData.name,
+        description: productFormData.description || '',
+        price: parseFloat(productFormData.price),
+        category: productFormData.category,
+        image_url: productFormData.image || editingProduct.image,
+        available: productFormData.available,
+      };
+
+      console.log('🔄 Updating product in Firebase:', productData);
+
+      const response = await fetch(
+        `https://livraison-api-x45n.onrender.com/api/stores/${currentStore.id}/products/${editingProduct.id}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify(productData),
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        // تحديث القائمة محلياً
+        setProducts(prev =>
+          prev.map(p =>
+            p.id === editingProduct.id
+              ? { ...p, ...productData, image: productData.image_url }
+              : p
+          )
+        );
+
+        // إعادة تعيين حالة التعديل
+        setEditingProduct(null);
+        setProductFormData({
+          name: '',
+          description: '',
+          price: '',
+          category: '',
+          image: null,
+          available: true,
+        });
+
+        const newActivity = {
+          icon: '✏️',
+          message: `تم تحديث المنتج: ${productData.name}`,
+          time: getCurrentTime(),
+        };
+        setRecentActivity(prev => [newActivity, ...prev.slice(0, 4)]);
+
+        alert('✅ تم تحديث المنتج بنجاح في Firebase!');
+      } else {
+        console.error('❌ API error:', data.message);
+        alert('❌ خطأ في تحديث المنتج: ' + data.message);
+      }
+    } catch (error) {
+      console.error('❌ Error updating product:', error);
+      alert('❌ خطأ في تحديث المنتج: ' + error.message);
+    }
+  };
+  // 🎯 مكون إدارة منتجات المتجر - النسخة الكاملة المحدثة
+  const StoreProductsManagement = () => {
+    if (!currentStore) return null;
+
+    return (
+      <div className="store-products-management">
+        <div className="section-header">
+          <button
+            className="action-btn secondary small"
+            onClick={() => {
+              setCurrentStore(null);
+              setStoreViewMode('customer');
+              setEditingProduct(null);
+              setProductFormData({
+                name: '',
+                description: '',
+                price: '',
+                category: '',
+                image: null,
+                available: true,
+              });
+            }}
+            style={{ marginBottom: '1rem' }}
+          >
+            ↩️ {t('back_to_stores')}
+          </button>
+
+          <h2>
+            📦 {t('manage_products')} - {currentStore.name}
+          </h2>
+          <p>{t('add_edit_delete_products')}</p>
+        </div>
+
+        {/* شارة المنتج قيد التعديل */}
+        {editingProduct && (
+          <div className="editing-badge">
+            <div className="editing-badge-content">
+              <span className="editing-icon">✏️</span>
+              <span className="editing-text">
+                قيد التعديل: <strong>{editingProduct.name}</strong>
+              </span>
+              <button
+                type="button"
+                className="cancel-edit-btn"
+                onClick={() => {
+                  setEditingProduct(null);
+                  setProductFormData({
+                    name: '',
+                    description: '',
+                    price: '',
+                    category: '',
+                    image: null,
+                    available: true,
+                  });
+                }}
+              >
+                ❌ إلغاء التعديل
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* قسم إضافة/تعديل منتج جديد */}
+        <div className="add-product-section">
+          <h3>
+            {editingProduct
+              ? '✏️ ' + t('edit_product')
+              : '➕ ' + t('add_new_product')}
+          </h3>
+
+          <form
+            onSubmit={editingProduct ? handleUpdateProduct : handleAddProduct}
+            className="add-product-form"
+          >
+            <div className="form-grid">
+              {/* اسم المنتج */}
+              <div className="form-group">
+                <label className="required">🍽️ {t('product_name')}</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  placeholder={t('enter_product_name')}
+                  value={productFormData.name}
+                  onChange={e =>
+                    setProductFormData(prev => ({
+                      ...prev,
+                      name: e.target.value,
+                    }))
+                  }
+                  required
+                />
+              </div>
+
+              {/* سعر المنتج */}
+              <div className="form-group">
+                <label className="required">💰 {t('price')}</label>
+                <input
+                  type="number"
+                  className="form-input"
+                  placeholder={t('enter_price')}
+                  value={productFormData.price}
+                  onChange={e =>
+                    setProductFormData(prev => ({
+                      ...prev,
+                      price: e.target.value,
+                    }))
+                  }
+                  required
+                  min="0"
+                  step="50"
+                />
+              </div>
+
+              {/* فئة المنتج */}
+              <div className="form-group">
+                <label className="required">📂 {t('category')}</label>
+                <select
+                  className="form-select"
+                  value={productFormData.category}
+                  onChange={e =>
+                    setProductFormData(prev => ({
+                      ...prev,
+                      category: e.target.value,
+                    }))
+                  }
+                  required
+                >
+                  <option value="">{t('select_category')}</option>
+                  <option value="أطباق رئيسية">{t('main_dishes')}</option>
+                  <option value="مقبلات">{t('appetizers')}</option>
+                  <option value="مشروبات">{t('drinks')}</option>
+                  <option value="حلويات">{t('desserts')}</option>
+                  <option value="وجبات سريعة">{t('fast_food')}</option>
+                </select>
+              </div>
+
+              {/* وصف المنتج */}
+              <div className="form-group">
+                <label>📝 {t('description')}</label>
+                <textarea
+                  className="form-input form-textarea"
+                  placeholder={t('enter_product_description')}
+                  value={productFormData.description}
+                  onChange={e =>
+                    setProductFormData(prev => ({
+                      ...prev,
+                      description: e.target.value,
+                    }))
+                  }
+                  rows="3"
+                />
+              </div>
+
+              {/* حقل الصورة مع خيارات متعددة */}
+              <div className="form-group full-width">
+                <label>🖼️ {t('product_image')}</label>
+
+                {/* رابط الصورة اليدوي */}
+                <input
+                  type="text"
+                  className="form-input"
+                  placeholder="https://example.com/image.jpg"
+                  value={productFormData.image || ''}
+                  onChange={e =>
+                    setProductFormData(prev => ({
+                      ...prev,
+                      image: e.target.value,
+                    }))
+                  }
+                  style={{ marginBottom: '1rem' }}
+                />
+
+                {/* خيارات تحميل الصور */}
+                <div className="image-upload-options">
+                  <p className="upload-options-title">
+                    📁 اختر طريقة تحميل الصورة:
+                  </p>
+
+                  <div className="upload-buttons-grid">
+                    {/* رفع من الجهاز */}
+                    <label className="upload-btn primary">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        style={{ display: 'none' }}
+                      />
+                      <span className="upload-btn-icon">📱</span>
+                      <span>رفع من جهازي</span>
+                    </label>
+
+                    {/* Unsplash */}
+                    <button
+                      type="button"
+                      className="upload-btn"
+                      onClick={handleUnsplashImage}
+                      disabled={!productFormData.category}
+                    >
+                      <span className="upload-btn-icon">🌄</span>
+                      <span>صورة من Unsplash</span>
+                    </button>
+
+                    {/* رابط يدوي */}
+                    <button
+                      type="button"
+                      className="upload-btn"
+                      onClick={handleImageUrl}
+                    >
+                      <span className="upload-btn-icon">🔗</span>
+                      <span>إدخال رابط</span>
+                    </button>
+                  </div>
+
+                  {/* معاينة الصورة */}
+                  <div className="image-preview-section">
+                    <label className="image-preview-label">
+                      👁️ معاينة الصورة:
+                    </label>
+
+                    <div
+                      className={`image-preview-container ${
+                        productFormData.image ? 'has-image' : ''
+                      }`}
+                    >
+                      {productFormData.image ? (
+                        <>
+                          <img
+                            src={productFormData.image}
+                            alt="معاينة الصورة"
+                            onError={e => {
+                              e.target.onerror = null;
+                              e.target.src =
+                                'https://via.placeholder.com/400x300/4a5568/ffffff?text=صورة+غير+متوفرة';
+                            }}
+                          />
+                          <div className="preview-actions">
+                            <button
+                              type="button"
+                              className="preview-action-btn"
+                              onClick={() => {
+                                window.open(productFormData.image, '_blank');
+                              }}
+                              title="فتح في نافذة جديدة"
+                            >
+                              🔍
+                            </button>
+                            <button
+                              type="button"
+                              className="preview-action-btn"
+                              onClick={() =>
+                                setProductFormData(prev => ({
+                                  ...prev,
+                                  image: null,
+                                }))
+                              }
+                              title="حذف الصورة"
+                            >
+                              ❌
+                            </button>
+                          </div>
+                        </>
+                      ) : (
+                        <div className="image-preview-placeholder">
+                          <div className="icon">🖼️</div>
+                          <p>لم يتم اختيار صورة</p>
+                          <small>اختر صورة للمنتج</small>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <small className="form-hint">
+                  يمكنك رفع صورة من جهازك أو استخدام صورة من Unsplash
+                </small>
+              </div>
+
+              {/* حالة التوفر */}
+              <div className="form-group">
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={productFormData.available}
+                    onChange={e =>
+                      setProductFormData(prev => ({
+                        ...prev,
+                        available: e.target.checked,
+                      }))
+                    }
+                  />
+                  <span>✅ {t('product_available')}</span>
+                </label>
+              </div>
+            </div>
+
+            {/* أزرار النموذج */}
+            <div className="form-actions">
+              <button
+                type="button"
+                className="form-btn secondary"
+                onClick={() => {
+                  setEditingProduct(null);
+                  setProductFormData({
+                    name: '',
+                    description: '',
+                    price: '',
+                    category: '',
+                    image: null,
+                    available: true,
+                  });
+                }}
+              >
+                🔄 مسح النموذج
+              </button>
+
+              {editingProduct ? (
+                <>
+                  <button
+                    type="button"
+                    className="form-btn warning"
+                    onClick={() => {
+                      setEditingProduct(null);
+                      setProductFormData({
+                        name: '',
+                        description: '',
+                        price: '',
+                        category: '',
+                        image: null,
+                        available: true,
+                      });
+                    }}
+                  >
+                    ❌ إلغاء التعديل
+                  </button>
+                  <button
+                    type="submit"
+                    className="form-btn success"
+                    disabled={
+                      !productFormData.name ||
+                      !productFormData.price ||
+                      !productFormData.category
+                    }
+                  >
+                    ✅ تحديث المنتج
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="submit"
+                  className="form-btn primary"
+                  disabled={
+                    !productFormData.name ||
+                    !productFormData.price ||
+                    !productFormData.category
+                  }
+                >
+                  ➕ {t('add_product')}
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
+
+        {/* قائمة المنتجات الحالية */}
+        <div className="current-products-section">
+          <h3>
+            📋 {t('current_products')} ({products.length})
+          </h3>
+
+          {products.length > 0 ? (
+            <div className="products-list">
+              {products.map(product => (
+                <div key={product.id} className="product-item">
+                  <div className="product-item-image">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      onError={e => {
+                        e.target.onerror = null;
+                        e.target.src =
+                          'https://via.placeholder.com/80/4a5568/ffffff?text=No+Image';
+                      }}
+                    />
+                  </div>
+
+                  <div className="product-item-info">
+                    <div className="product-item-header">
+                      <h4>{product.name}</h4>
+                      <span
+                        className={`product-status ${
+                          product.available ? 'available' : 'unavailable'
+                        }`}
+                      >
+                        {product.available ? '✅ متوفر' : '⏸️ غير متوفر'}
+                      </span>
+                    </div>
+
+                    <p className="product-item-description">
+                      {product.description}
+                    </p>
+
+                    <div className="product-item-details">
+                      <span className="product-item-price">
+                        💰 {product.price?.toLocaleString() || 0} د.ج
+                      </span>
+                      <span className="product-item-category">
+                        📂 {product.category}
+                      </span>
+                      <span className="product-item-rating">
+                        ⭐ {product.rating || 0}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="product-item-actions">
+                    <button
+                      className="action-btn small edit"
+                      onClick={() => {
+                        // تحميل بيانات المنتج في النموذج للتعديل
+                        setEditingProduct(product);
+                        setProductFormData({
+                          name: product.name,
+                          description: product.description || '',
+                          price: product.price?.toString() || '',
+                          category: product.category || '',
+                          image: product.image || null,
+                          available: product.available !== false,
+                        });
+                        // التمرير لأعلى النموذج
+                        document
+                          .querySelector('.add-product-section')
+                          ?.scrollIntoView({
+                            behavior: 'smooth',
+                          });
+                      }}
+                      title="تعديل المنتج"
+                    >
+                      ✏️ {t('edit')}
+                    </button>
+
+                    <button
+                      className="action-btn small toggle-availability"
+                      onClick={() =>
+                        toggleProductAvailability(product.id, product.available)
+                      }
+                      title={
+                        product.available ? 'تعطيل المنتج' : 'تفعيل المنتج'
+                      }
+                    >
+                      {product.available ? '⏸️' : '✅'}
+                    </button>
+
+                    <button
+                      className="action-btn small delete"
+                      onClick={() => handleDeleteProduct(product.id)}
+                      title="حذف المنتج"
+                    >
+                      🗑️ {t('delete')}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="no-products-message">
+              <div className="no-products-icon">📭</div>
+              <p>{t('no_products_yet')}</p>
+              <p className="hint-text">{t('start_adding_products_hint')}</p>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  // 🔹 دالة تغيير حالة توفر المنتج
+  const toggleProductAvailability = async (productId, currentAvailability) => {
+    try {
+      const newAvailability = !currentAvailability;
+
+      const response = await fetch(
+        `https://livraison-api-x45n.onrender.com/api/stores/${currentStore.id}/products/${productId}/availability`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify({ available: newAvailability }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        // تحديث القائمة محلياً
+        setProducts(prev =>
+          prev.map(p =>
+            p.id === productId ? { ...p, available: newAvailability } : p
+          )
+        );
+
+        const newActivity = {
+          icon: '🔄',
+          message: `تم تغيير حالة المنتج إلى ${
+            newAvailability ? 'متوفر' : 'غير متوفر'
+          }`,
+          time: getCurrentTime(),
+        };
+        setRecentActivity(prev => [newActivity, ...prev.slice(0, 4)]);
+
+        alert(
+          `✅ تم تغيير حالة المنتج إلى ${
+            newAvailability ? 'متوفر' : 'غير متوفر'
+          }`
+        );
+        return true;
+      } else {
+        alert('❌ ' + data.message);
+        return false;
+      }
+    } catch (error) {
+      console.error('❌ Error toggling product availability:', error);
+      alert('❌ خطأ في تغيير حالة المنتج');
+      return false;
+    }
+  };
+
+  // 🔹 دالة البحث في المنتجات
   // دالة تصفية المتاجر
   const filteredStores = stores.filter(store => {
     if (storeFilter === 'all') return true;
@@ -2031,15 +3064,24 @@ export default function DashboardPartner() {
                           </div>
 
                           <div className="store-actions">
-                            <button className="store-btn edit">
-                              ✏️ {t('edit')}
+                            <button
+                              className="store-btn products"
+                              onClick={() => manageStoreProducts(store)}
+                              title="إدارة المنتجات"
+                            >
+                              📦 {t('manage_products')}
                             </button>
-                            <button className="store-btn view">
-                              👁️ {t('view')}
+                            <button
+                              className="store-btn view"
+                              onClick={() => viewStoreAsCustomer(store)}
+                              title="عرض المتجر للزبون"
+                            >
+                              👁️ {t('view_as_customer')}
                             </button>
                             <button
                               className="store-btn delete"
                               onClick={() => handleDeleteStore(store.id)}
+                              title="حذف المتجر"
                             >
                               🗑️ {t('delete')}
                             </button>
@@ -2063,7 +3105,39 @@ export default function DashboardPartner() {
               </div>
             </div>
           )}
+          {/* 🎯 عرض المتجر كالزبون */}
+          {activeSection === 'manage_stores' &&
+            currentStore &&
+            storeViewMode === 'customer' && <StoreCustomerView />}
 
+          {/* 🎯 إدارة منتجات المتجر */}
+          {activeSection === 'manage_stores' &&
+            currentStore &&
+            storeViewMode === 'products' && (
+              <StoreProductsManagementRedesigned
+                currentStore={currentStore}
+                editingProduct={editingProduct}
+                productFormData={productFormData}
+                setProductFormData={setProductFormData}
+                onAddProduct={handleAddProduct}
+                onUpdateProduct={handleUpdateProduct}
+                onDeleteProduct={handleDeleteProduct}
+                onBack={() => {
+                  setCurrentStore(null);
+                  setStoreViewMode('customer');
+                  setEditingProduct(null);
+                  setProductFormData({
+                    name: '',
+                    description: '',
+                    price: '',
+                    category: '',
+                    image: null,
+                    available: true,
+                  });
+                }}
+                products={products}
+              />
+            )}
           {/* 🆕 رسالة للمستخدمين على الكمبيوتر */}
           {activeSection === 'scanner' && !isMobile && (
             <div className="desktop-scanner-message">
@@ -2103,53 +3177,41 @@ export default function DashboardPartner() {
           )}
 
           {/* أقسام أخرى للشريك */}
-          {activeSection === 'orders' && (
-            <div className="orders-content">
-              <div className="section-header">
-                <h2>📦 {t('all_orders')}</h2>
-                <p>{t('manage_all_orders')}</p>
-              </div>
-              <div className="content-placeholder">
-                <p>🚧 {t('under_development')}</p>
-              </div>
-            </div>
+          {activeSection === 'profile' && (
+            <PartnerProfile
+              user={user}
+              onLogout={handleLogout}
+              onUpdateProfile={async data => {
+                // هنا يمكنك إضافة logic لتحديث البيانات
+                console.log('تم تحديث الملف الشخصي:', data);
+                // setUser({ ...user, ...data });
+              }}
+            />
           )}
 
-          {activeSection === 'deliveries' && (
-            <div className="deliveries-content">
-              <div className="section-header">
-                <h2>🚚 {t('delivery_history')}</h2>
-                <p>{t('view_delivery_history')}</p>
-              </div>
-              <div className="content-placeholder">
-                <p>🚧 {t('under_development')}</p>
-              </div>
-            </div>
+          {activeSection === 'settings' && (
+            <PartnerSettings
+              user={user}
+              onLogout={handleLogout}
+              onUpdateSettings={async data => {
+                // هنا يمكنك إضافة logic لتحديث الإعدادات
+                console.log('تم تحديث الإعدادات:', data);
+                // يمكنك هنا إرسال البيانات للـ backend أو Firebase
+              }}
+            />
           )}
 
-          {activeSection === 'earnings' && (
-            <div className="earnings-content">
-              <div className="section-header">
-                <h2>💰 {t('earnings_reports')}</h2>
-                <p>{t('view_earnings_reports')}</p>
-              </div>
-              <div className="content-placeholder">
-                <p>🚧 {t('under_development')}</p>
-              </div>
-            </div>
+          {activeSection === 'reports' && (
+            <PartnerReports
+              user={user}
+              onExport={format => {
+                console.log('تصدير التقارير بصيغة:', format);
+                // يمكنك هنا إضافة logic لتصدير التقارير
+              }}
+            />
           )}
 
-          {activeSection === 'schedule' && (
-            <div className="schedule-content">
-              <div className="section-header">
-                <h2>📅 {t('delivery_schedule')}</h2>
-                <p>{t('manage_delivery_schedule')}</p>
-              </div>
-              <div className="content-placeholder">
-                <p>🚧 {t('under_development')}</p>
-              </div>
-            </div>
-          )}
+          {activeSection === 'support' && <PartnerSupport user={user} />}
         </main>
       </div>
     </div>

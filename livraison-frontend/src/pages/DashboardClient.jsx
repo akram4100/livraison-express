@@ -4,6 +4,15 @@ import { QrReader } from 'react-qr-reader';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import '../style/dashboardClient.css';
+import '../style/client-profile-security.css';
+import '../style/client-orders-deliveries-payments.css';
+import '../style/client-stores.css';
+import ClientProfile from '../components/ClientProfile';
+import ClientSecurity from '../components/ClientSecurity';
+import ClientOrders from '../components/ClientOrders';
+import ClientDeliveries from '../components/ClientDeliveries';
+import ClientPayments from '../components/ClientPayments';
+import ClientStores from '../components/ClientStores';
 
 export default function DashboardClient() {
   const [user, setUser] = useState(null);
@@ -152,7 +161,8 @@ export default function DashboardClient() {
   // 🆕 تأثير لتحديث padding عند طي الشريط
   useEffect(() => {
     const clientContent = document.querySelector('.client-content');
-    if (clientContent && headerVisible) { // فقط إذا كان الرأس ظاهراً
+    if (clientContent && headerVisible) {
+      // فقط إذا كان الرأس ظاهراً
       if (headerCollapsed) {
         clientContent.style.paddingTop = '50px';
       } else {
@@ -870,7 +880,9 @@ export default function DashboardClient() {
                     onClick={toggleDarkMode}
                     aria-label={darkMode ? t('light_mode') : t('dark_mode')}
                   >
-                    <span className="toggle-icon">{darkMode ? '☀️' : '🌙'}</span>
+                    <span className="toggle-icon">
+                      {darkMode ? '☀️' : '🌙'}
+                    </span>
                     <span className="toggle-text">
                       {darkMode ? t('light_mode') : t('dark_mode')}
                     </span>
@@ -973,7 +985,7 @@ export default function DashboardClient() {
                 >
                   📊 {t('dashboard')}
                 </button>
-                
+
                 {isMobile && (
                   <button
                     className={`nav-item ${
@@ -987,7 +999,7 @@ export default function DashboardClient() {
                     📷 {t('scan_qr')}
                   </button>
                 )}
-                
+
                 <button
                   className={`nav-item ${
                     activeSection === 'orders' ? 'active' : ''
@@ -999,7 +1011,7 @@ export default function DashboardClient() {
                 >
                   📦 {t('my_orders')}
                 </button>
-                
+
                 <button
                   className={`nav-item ${
                     activeSection === 'deliveries' ? 'active' : ''
@@ -1011,7 +1023,7 @@ export default function DashboardClient() {
                 >
                   🚚 {t('deliveries')}
                 </button>
-                
+
                 <button
                   className={`nav-item ${
                     activeSection === 'stores' ? 'active' : ''
@@ -1023,7 +1035,7 @@ export default function DashboardClient() {
                 >
                   🛍️ المتاجر
                 </button>
-                
+
                 <button
                   className={`nav-item ${
                     activeSection === 'payments' ? 'active' : ''
@@ -1035,11 +1047,11 @@ export default function DashboardClient() {
                 >
                   💳 {t('payments')}
                 </button>
-                
+
                 <div className="nav-section-divider">
                   <span>{t('settings')}</span>
                 </div>
-                
+
                 <button
                   className="nav-item"
                   onClick={() => {
@@ -1049,7 +1061,7 @@ export default function DashboardClient() {
                 >
                   👤 {t('profile')}
                 </button>
-                
+
                 <button
                   className="nav-item"
                   onClick={() => {
@@ -1059,7 +1071,7 @@ export default function DashboardClient() {
                 >
                   🔒 {t('security')}
                 </button>
-                
+
                 <button
                   onClick={handleLogout}
                   className="nav-item logout-sidebar-btn"
@@ -1308,49 +1320,13 @@ export default function DashboardClient() {
           )}
 
           {/* أقسام أخرى */}
-          {activeSection === 'orders' && (
-            <div className="orders-content">
-              <div className="section-header">
-                <h2>📦 {t('my_orders')}</h2>
-                <p>{t('orders_management')}</p>
-              </div>
-              <div className="content-placeholder">
-                <p>🚧 {t('under_development')}</p>
-                {isMobile && (
-                  <button
-                    className="action-btn primary"
-                    onClick={() => navigateToSection('scanner')}
-                  >
-                    📷 {t('scan_new_order')}
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
+          {activeSection === 'stores' && <ClientStores />}
 
-          {activeSection === 'deliveries' && (
-            <div className="deliveries-content">
-              <div className="section-header">
-                <h2>🚚 {t('deliveries')}</h2>
-                <p>{t('deliveries_tracking')}</p>
-              </div>
-              <div className="content-placeholder">
-                <p>🚧 {t('under_development')}</p>
-              </div>
-            </div>
-          )}
+          {activeSection === 'orders' && <ClientOrders />}
 
-          {activeSection === 'payments' && (
-            <div className="payments-content">
-              <div className="section-header">
-                <h2>💳 {t('payments')}</h2>
-                <p>{t('payment_history')}</p>
-              </div>
-              <div className="content-placeholder">
-                <p>🚧 {t('under_development')}</p>
-              </div>
-            </div>
-          )}
+          {activeSection === 'deliveries' && <ClientDeliveries />}
+
+          {activeSection === 'payments' && <ClientPayments />}
         </main>
       </div>
     </div>

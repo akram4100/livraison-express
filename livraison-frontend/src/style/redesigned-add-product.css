@@ -1,0 +1,592 @@
+/* ============= 🆕 REDESIGN - Add Product Section ============= */
+
+/* 🔄 إعادة تعيين كاملة للقسم */
+.redesigned-add-product-section {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 24px;
+  padding: 2.5rem;
+  margin: 2rem 0;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.redesigned-add-product-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #8b5cf6 0%, #3b82f6 50%, #10b981 100%);
+  z-index: 2;
+}
+
+.redesigned-add-product-section .section-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+
+.redesigned-add-product-section .section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100px;
+  height: 2px;
+  background: linear-gradient(90deg, #8b5cf6, #3b82f6);
+}
+
+/* ============= 🆕 تصميم الحقول الجديدة ============= */
+
+/* حاوية الحقول */
+.redesigned-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* مجموعة الحقول */
+.redesigned-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.redesigned-form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+/* التسميات */
+.redesigned-form-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.redesigned-form-label.required::after {
+  content: '*';
+  color: #ef4444;
+  margin-left: 0.25rem;
+  font-weight: bold;
+}
+
+/* حقول الإدخال الأساسية */
+.redesigned-form-input {
+  width: 100%;
+  padding: 0.875rem 1.25rem;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
+  outline: none;
+  backdrop-filter: blur(10px);
+  transform: none !important;
+  animation: none !important;
+}
+
+.redesigned-form-input:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.redesigned-form-input:focus {
+  border-color: #3b82f6;
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2),
+    0 4px 12px rgba(59, 130, 246, 0.15);
+  transform: none !important;
+  animation: none !important;
+}
+
+.redesigned-form-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 400;
+}
+
+/* textarea خاص */
+.redesigned-form-textarea {
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.5;
+  padding: 1rem 1.25rem;
+  transform: none !important;
+  animation: none !important;
+}
+
+/* select خاص */
+.redesigned-form-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1.25rem;
+  padding-right: 3rem;
+  transform: none !important;
+  animation: none !important;
+}
+
+.redesigned-form-select:focus {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 15l-6-6-6 6'/%3E%3C/svg%3E");
+}
+
+.redesigned-form-select option {
+  background: #1f2937;
+  color: white;
+  padding: 0.75rem;
+}
+
+/* checkbox */
+.redesigned-checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.redesigned-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  user-select: none;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+
+.redesigned-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: #3b82f6;
+  cursor: pointer;
+}
+
+/* ============= 🆕 قسم تحميل الصور الجديد ============= */
+
+.redesigned-image-upload-section {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.upload-section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* أزرار تحميل الصور */
+.redesigned-upload-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.redesigned-upload-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.5rem 1rem;
+  background: rgba(255, 255, 255, 0.07);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  transform: none !important;
+  animation: none !important;
+}
+
+.redesigned-upload-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(59, 130, 246, 0.5);
+  transform: translateY(-2px);
+}
+
+.redesigned-upload-btn:active {
+  transform: translateY(0);
+}
+
+.redesigned-upload-btn input[type='file'] {
+  display: none;
+}
+
+.upload-btn-icon {
+  font-size: 2rem;
+  opacity: 0.8;
+}
+
+.upload-btn-text {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* معاينة الصورة */
+.redesigned-image-preview-container {
+  width: 100%;
+  height: 250px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.03);
+  position: relative;
+  margin-top: 1rem;
+}
+
+.redesigned-image-preview-container.has-image {
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.redesigned-image-preview-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.redesigned-image-preview-container:hover img {
+  transform: scale(1.02);
+}
+
+.image-preview-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: rgba(255, 255, 255, 0.5);
+  gap: 1rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.placeholder-icon {
+  font-size: 3rem;
+  opacity: 0.3;
+}
+
+.preview-actions-bar {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.redesigned-image-preview-container:hover .preview-actions-bar {
+  opacity: 1;
+}
+
+.preview-action-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+
+.preview-action-btn:hover {
+  background: rgba(0, 0, 0, 0.9);
+  transform: scale(1.1);
+}
+
+/* ============= 🆕 أزرار النموذج الجديدة ============= */
+
+.redesigned-form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  flex-wrap: wrap;
+}
+
+.redesigned-form-btn {
+  flex: 1;
+  min-width: 150px;
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.redesigned-form-btn.primary {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.redesigned-form-btn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.redesigned-form-btn.secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.redesigned-form-btn.secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.redesigned-form-btn.danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+}
+
+.redesigned-form-btn.danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+.redesigned-form-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ============= 🆕 شارة التعديل الجديدة ============= */
+
+.redesigned-editing-badge {
+  background: linear-gradient(
+    135deg,
+    rgba(245, 158, 11, 0.2) 0%,
+    rgba(217, 119, 6, 0.15) 100%
+  );
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.editing-badge-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.editing-badge-icon {
+  font-size: 1.25rem;
+}
+
+.editing-badge-text {
+  color: white;
+  font-weight: 500;
+  flex: 1;
+}
+
+.editing-badge-text strong {
+  color: #fbbf24;
+}
+
+/* ============= 🆕 تحسينات للشاشات الصغيرة ============= */
+
+@media (max-width: 768px) {
+  .redesigned-add-product-section {
+    padding: 1.5rem;
+    margin: 1rem 0;
+    border-radius: 20px;
+  }
+
+  .redesigned-form-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .redesigned-form-input,
+  .redesigned-form-textarea,
+  .redesigned-form-select {
+    padding: 0.875rem 1rem;
+    font-size: 16px; /* منع التكبير في iOS */
+  }
+
+  .redesigned-upload-buttons {
+    grid-template-columns: 1fr;
+  }
+
+  .redesigned-form-actions {
+    flex-direction: column;
+  }
+
+  .redesigned-form-btn {
+    width: 100%;
+  }
+
+  .redesigned-image-preview-container {
+    height: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .redesigned-add-product-section {
+    padding: 1.25rem;
+  }
+
+  .redesigned-add-product-section .section-title {
+    font-size: 1.4rem;
+  }
+
+  .redesigned-form-input,
+  .redesigned-form-textarea {
+    font-size: 16px;
+    padding: 0.875rem;
+  }
+}
+
+/* ============= 🆕 تحسينات الوضع المظلم ============= */
+
+.dark .redesigned-add-product-section {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.25) 0%,
+    rgba(0, 0, 0, 0.2) 100%
+  );
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark .redesigned-form-input {
+  background: rgba(0, 0, 0, 0.25);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.dark .redesigned-form-input:focus {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.dark .redesigned-image-upload-section {
+  background: rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* ============= 🆕 تأثيرات خاصة ============= */
+
+/* تأثير النجاح */
+.success-message {
+  background: linear-gradient(
+    135deg,
+    rgba(34, 197, 94, 0.15) 0%,
+    rgba(21, 128, 61, 0.1) 100%
+  );
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.success-icon {
+  font-size: 1.5rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* تلميحات */
+.form-hint {
+  display: block;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 0.25rem;
+  font-style: italic;
+}
+
+/* تعطيل الأنيميشنات للأداء */
+@media (prefers-reduced-motion: reduce) {
+  .redesigned-form-input,
+  .redesigned-form-btn,
+  .redesigned-upload-btn {
+    transition: none !important;
+  }
+
+  .redesigned-form-btn:hover {
+    transform: none !important;
+  }
+}
