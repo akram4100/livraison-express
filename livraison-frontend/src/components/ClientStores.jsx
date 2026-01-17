@@ -143,8 +143,34 @@ const ClientStores = ({ stores: propsStores }) => {
 
   // 🔥 جلب المتاجر من API عند تحميل المكون
   useEffect(() => {
+    // تعيين apiUrl الافتراضي إذا لم يكن موجوداً
+    if (!localStorage.getItem('apiUrl')) {
+      localStorage.setItem('apiUrl', 'http://localhost:8080');
+    }
     fetchStoresFromAPI();
   }, []);
+
+  // دالة تنسيق البيانات من Firebase لتطابق الهيكل المتوقع
+  const normalizeStore = (store) => {
+    return {
+      id: store.id || 'unknown',
+      name: store.name || 'متجر بدون اسم',
+      category: store.category || 'restaurant',
+      description: store.description || 'وصف المتجر',
+      address: store.address || 'عنوان غير محدد',
+      phone: store.phone || '---',
+      logo_url: store.logo_url || store.logo || 'https://via.placeholder.com/150/999/FFF?text=متجر',
+      banner_url: store.banner_url || store.banner || 'https://via.placeholder.com/400x200/999/FFF?text=متجر',
+      rating: store.rating || 4.5,
+      total_reviews: store.total_reviews || 0,
+      status: store.status || 'active',
+      delivery_fee: store.delivery_fee || 0,
+      min_order: store.min_order || 0,
+      preparation_time: store.preparation_time || 20,
+      open: store.open !== false, // افتراض مفتوح إذا لم يُحدد
+      hours: store.hours || '09:00 - 23:00',
+    };
+  };
 
   // دالة جلب المتاجر من السيرفر (Firebase)
   const fetchStoresFromAPI = async () => {
@@ -171,10 +197,16 @@ const ClientStores = ({ stores: propsStores }) => {
       if (response.ok) {
         const data = await response.json();
         console.log(`✅ تم جلب ${data.stores?.length || 0} متجر من Firebase`);
+        console.log('📊 البيانات الأولى:', JSON.stringify(data.stores?.[0], null, 2));
         
         if (data.stores && data.stores.length > 0) {
-          setStores(data.stores);
-          setFilteredStores(data.stores);
+          // تنسيق البيانات
+          const normalizedStores = data.stores.map(normalizeStore);
+          console.log('✅ تم تنسيق البيانات');
+          console.log('📊 أول متجر بعد التنسيق:', JSON.stringify(normalizedStores[0], null, 2));
+          
+          setStores(normalizedStores);
+          setFilteredStores(normalizedStores);
           console.log('✅✅ تم تحميل المتاجر من قاعدة البيانات بنجاح!');
         } else {
           console.warn('⚠️ لا توجد متاجر في قاعدة البيانات');
@@ -210,23 +242,32 @@ const ClientStores = ({ stores: propsStores }) => {
   }, [selectedCategory, searchTerm, stores]);
 
   const filterStores = () => {
+    if (!stores || stores.length === 0) {
+      console.warn('⚠️ لا توجد متاجر للتصفية');
+      setFilteredStores([]);
+      return;
+    }
+
     let filtered = stores;
 
     // تصفية حسب الفئة
     if (selectedCategory !== 'all') {
       filtered = filtered.filter(store => store.category === selectedCategory);
+      console.log(`📋 تم تصفية حسب الفئة ${selectedCategory}: ${filtered.length} متاجر`);
     }
 
     // تصفية حسب البحث
     if (searchTerm) {
       filtered = filtered.filter(
         store =>
-          store.name.includes(searchTerm) ||
-          store.description.includes(searchTerm) ||
-          store.address.includes(searchTerm)
+          (store.name && store.name.includes(searchTerm)) ||
+          (store.description && store.description.includes(searchTerm)) ||
+          (store.address && store.address.includes(searchTerm))
       );
+      console.log(`🔍 تم البحث عن "${searchTerm}": ${filtered.length} متاجر`);
     }
 
+    console.log(`✅ عدد المتاجر المعروضة: ${filtered.length}`);
     setFilteredStores(filtered);
   };
 
@@ -252,6 +293,27 @@ const ClientStores = ({ stores: propsStores }) => {
       </div>
 
       <div className="stores-content">
+        {/* رسالة تصحيح للمطورين */}
+        {stores.length === 0 && !loading && (
+          <div style={{
+            background: '#fff3cd',
+            border: '2px solid #ffc107',
+            borderRadius: '8px',
+            padding: '15px',
+            marginBottom: '20px',
+            direction: 'rtl',
+            textAlign: 'right'
+          }}>
+            <strong>⚠️ تنبيه:</strong> لا توجد متاجر!
+            <div style={{ fontSize: '12px', marginTop: '8px', color: '#555' }}>
+              ✓ تحقق من أن السيرفر يعمل: <code>node server-render.js</code>
+              <br />✓ تحقق من أن Firebase متصل
+              <br />✓ تحقق من أن هناك متاجر نشطة في Firestore
+              <br />✓ فتح DevTools (F12) لرؤية الأخطاء
+            </div>
+          </div>
+        )}
+
         {/* رأس القسم */}
         <motion.div
           className="stores-header"
@@ -309,6 +371,12 @@ const ClientStores = ({ stores: propsStores }) => {
             <div className="loading">
               <div className="spinner"></div>
               <p>{t('loading') || 'جاري التحميل...'}</p>
+            </div>
+          ) : error ? (
+            <div className="error-message">
+              <div className="error-icon">⚠️</div>
+              <p>خطأ: {error}</p>
+              <p className="error-hint">جاري استخدام بيانات عينة</p>
             </div>
           ) : filteredStores.length > 0 ? (
             filteredStores.map((store, index) => (

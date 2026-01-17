@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار الـ API</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+        h1 { color: #333; margin-bottom: 20px; text-align: center; }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Courier New', monospace;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        button:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3); }
+        .result {
+            background: #f5f5f5;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        .result.success { border-color: #4caf50; background: #f1f8f4; }
+        .result.error { border-color: #f44336; background: #fef5f5; }
+        .result-title { font-weight: bold; margin-bottom: 10px; }
+        .success { color: #4caf50; }
+        .error { color: #f44336; }
+        .loading { color: #ff9800; }
+        .stores-list {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        .store-item {
+            background: #f9f9f9;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .store-name { font-weight: bold; color: #333; }
+        .store-category { color: #999; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 اختبار الـ API</h1>
+        
+        <div class="input-group">
+            <label>URL السيرفر:</label>
+            <input type="text" id="apiUrl" value="http://localhost:8080" />
+        </div>
+
+        <button onclick="testAPI()">🚀 اختبر الـ API</button>
+
+        <div class="result" id="result" style="display:none;"></div>
+
+        <div class="stores-list" id="storesList"></div>
+    </div>
+
+    <script>
+        async function testAPI() {
+            const apiUrl = document.getElementById('apiUrl').value;
+            const resultDiv = document.getElementById('result');
+            const storesListDiv = document.getElementById('storesList');
+            
+            resultDiv.innerHTML = '<div class="loading">⏳ جاري الاتصال...</div>';
+            resultDiv.style.display = 'block';
+            storesListDiv.innerHTML = '';
+
+            try {
+                console.log('🔥 جاري جلب من:', `${apiUrl}/api/client/stores`);
+                
+                const response = await fetch(`${apiUrl}/api/client/stores`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                });
+
+                console.log('📡 رد الحالة:', response.status);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP Error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('✅ البيانات:', data);
+
+                let html = `<div class="result-title success">✅ نجح الاتصال!</div>`;
+                html += `<div><strong>الحالة:</strong> ${data.message}</div>`;
+                html += `<div><strong>عدد المتاجر:</strong> ${data.total}</div>`;
+                html += `<div><strong>المصدر:</strong> ${data.source}</div>`;
+                html += `<div><strong>الرد الكامل:</strong></div>`;
+                html += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+
+                resultDiv.innerHTML = html;
+                resultDiv.classList.add('success');
+                resultDiv.classList.remove('error');
+
+                // عرض المتاجر
+                if (data.stores && data.stores.length > 0) {
+                    let storesHtml = '<h3>المتاجر المسترجعة:</h3>';
+                    data.stores.forEach((store, index) => {
+                        storesHtml += `
+                            <div class="store-item">
+                                <div class="store-name">${index + 1}. ${store.name || 'بدون اسم'}</div>
+                                <div class="store-category">الفئة: ${store.category || 'N/A'}</div>
+                                <div style="font-size: 11px; color: #666;">الحالة: ${store.status || 'N/A'}</div>
+                            </div>
+                        `;
+                    });
+                    storesListDiv.innerHTML = storesHtml;
+                }
+
+            } catch (error) {
+                console.error('❌ خطأ:', error);
+                resultDiv.innerHTML = `
+                    <div class="result-title error">❌ حدث خطأ!</div>
+                    <div><strong>الخطأ:</strong> ${error.message}</div>
+                    <div><strong>جرّب:</strong></div>
+                    <ul>
+                        <li>تأكد من أن السيرفر يعمل: <code>node server-render.js</code></li>
+                        <li>تأكد من الـ Port: 8080</li>
+                        <li>تأكد من Firebase credentials</li>
+                    </ul>
+                `;
+                resultDiv.classList.add('error');
+                resultDiv.classList.remove('success');
+            }
+        }
+
+        // اختبار تلقائي عند التحميل
+        window.addEventListener('load', () => {
+            console.log('🧪 تم تحميل صفحة الاختبار');
+        });
+    </script>
+</body>
+</html>

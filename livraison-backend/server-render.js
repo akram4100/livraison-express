@@ -20,8 +20,25 @@ const {
 dotenv.config();
 
 const app = express();
+
 // ==============================================
-// 🎯 FIX: PARTNER STORES ENDPOINT - WORKING VERSION
+// 🛡️ CORS - قبل أي شيء آخر
+// ==============================================
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept');
+  
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
+app.use(cors({ origin: '*', methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'] }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 // ==============================================
 app.get("/api/partner/stores", async (req, res) => {
   try {
@@ -121,6 +138,60 @@ app.get("/api/client/stores", async (req, res) => {
 });
 
 // ==============================================
+// 🏪 GET /api/stores - نفس endpoint /api/client/stores
+// ==============================================
+app.get("/api/stores", async (req, res) => {
+  try {
+    console.log("🏪 API CALLED: /api/stores - جلب جميع المتاجر");
+    
+    if (!db) {
+      console.error("❌ Firebase not connected!");
+      return res.status(503).json({
+        success: false,
+        message: "❌ قاعدة البيانات غير متصلة"
+      });
+    }
+
+    console.log("📡 جاري الاتصال بـ Firebase للحصول على المتاجر النشطة...");
+    
+    // جلب جميع المتاجر النشطة من Firebase
+    const storesQuery = query(
+      collection(db, "stores"),
+      where("status", "==", "active")
+    );
+    
+    const snapshot = await getDocs(storesQuery);
+    console.log(`✅ تم جلب ${snapshot.size} متجر من Firebase`);
+    
+    const stores = [];
+    snapshot.forEach((doc) => {
+      const storeData = doc.data();
+      console.log(`  ✓ متجر: ${storeData.name}`);
+      stores.push({
+        id: doc.id,
+        ...storeData
+      });
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "✅ تم جلب المتاجر من Firebase بنجاح",
+      stores: stores,
+      total: stores.length,
+      source: "Firebase (Data Real)"
+    });
+
+  } catch (error) {
+    console.error("❌ خطأ في جلب المتاجر:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "❌ خطأ في جلب المتاجر",
+      error: error.message
+    });
+  }
+});
+
+// ==============================================
 // 🛡️ CORS CONFIGURATION - محسّن لدعم جميع الـ Headers
 // ==============================================
 
@@ -136,32 +207,18 @@ app.options('*', (req, res) => {
 // CORS للطلبات العادية
 app.use(cors({
   origin: "*",
-  credentials: true,
+  credentials: false,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: [
-    'Content-Type', 
-    'Authorization', 
-    'Accept',
-    'Origin',
-    'X-Requested-With',
-    'Cache-Control',
-    'Pragma'
-  ]
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
 }));
 
 // معالجة الـ Headers يدوياً للتأكد
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, Origin, X-Requested-With, Cache-Control, Pragma');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept');
   next();
 });
-
-// ==============================================
-// 📦 MIDDLEWARE
-// ==============================================
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
 // Request logging
 app.use((req, res, next) => {

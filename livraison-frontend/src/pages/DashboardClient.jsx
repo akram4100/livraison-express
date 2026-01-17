@@ -227,8 +227,25 @@ export default function DashboardClient() {
     try {
       console.log('🏪 جاري جلب المتاجر من الـ API...');
       
-      const baseURL = localStorage.getItem('apiUrl') || 'http://localhost:8080';
-      const response = await fetch(`${baseURL}/api/client/stores`, {
+      // استخدم REACT_APP_API_URL من .env في الإنتاج
+      let baseURL = process.env.REACT_APP_API_URL;
+      
+      // إذا لم تكن موجودة، استخدم localStorage
+      if (!baseURL) {
+        baseURL = localStorage.getItem('apiUrl');
+      }
+      
+      // إذا لم تكن موجودة أيضاً، استخدم localhost للتطوير
+      if (!baseURL) {
+        baseURL = 'http://localhost:8080/api';
+      }
+      
+      // إزالة /api من النهاية إذا كانت موجودة، لأننا سنضيفها في الـ URL
+      const apiBase = baseURL.replace(/\/api\/?$/, '');
+      
+      console.log(`📍 API Base URL: ${apiBase}`);
+      
+      const response = await fetch(`${apiBase}/api/stores`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
